@@ -1,5 +1,4 @@
 package EncryptionTest;
-import java.awt.TextField;
 import java.util.*;
 import javax.swing.*;
 
@@ -69,6 +68,29 @@ public class Encryption {
     }
     public static boolean checkPasswordRequirments(JPasswordField a){
         //Length 8, 1 symbol, 1 uppercase char
-        return true;
+        String password = String.valueOf(a.getPassword());
+        if (!(password.length() >= 8)){
+            return false;
+        }
+        boolean hasSymbolChar = false;
+        boolean hasUpperChar = false;
+        boolean hasLowerChar = false;
+        boolean hasNumChar = false;
+        for (int i=0; i<password.length(); i++){
+            char currentChar = password.charAt(i);
+            if (((currentChar >= 33) && (currentChar <= 47)) || 
+                ((currentChar >= 58) && (currentChar <= 64)) ||
+                ((currentChar >= 91) && (currentChar <= 96)) ||
+                ((currentChar >= 123) && (currentChar <= 126))) {
+                hasSymbolChar = true;
+            } else if ((currentChar >= 65) && (currentChar <= 90)) {
+                hasUpperChar = true;
+            } else if ((currentChar >= 97) && (currentChar <= 122)) {
+                hasLowerChar = true;
+            } else if ((currentChar >= 48) && (currentChar <= 57)) {
+                hasNumChar = true;
+            }
+        }
+        return hasSymbolChar && hasUpperChar && hasLowerChar && hasNumChar;
     }
 }
