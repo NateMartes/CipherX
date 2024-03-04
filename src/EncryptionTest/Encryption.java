@@ -1,5 +1,7 @@
 package EncryptionTest;
+import java.awt.TextField;
 import java.util.*;
+import javax.swing.*;
 
 public class Encryption {
     private char[] asciiTable;
@@ -61,5 +63,12 @@ public class Encryption {
             }
         }
         this.password = String.valueOf(passwordArray);
+    }
+    public static boolean checkTextMacthes(JPasswordField a, JPasswordField b){
+        return (String.valueOf(a.getPassword())).equals(String.valueOf(b.getPassword()));
+    }
+    public static boolean checkPasswordRequirments(JPasswordField a){
+        //Length 8, 1 symbol, 1 uppercase char
+        return true;
     }
 }
