@@ -1,6 +1,8 @@
 package EncryptionTest;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+import java.util.*;
 import javax.swing.*;
 
 public class App extends JFrame implements ActionListener, KeyListener{
@@ -10,17 +12,20 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private TextField firstPsTextField;
     private JPasswordField secondJPasswordField;
     private TextField secondTextField;
-    private JButton swapButton;
-    private JButton swapButton1;
+    private JButton viewButton;
+    private JButton viewButton1;
     private JButton submitButton;
     private JLabel verifyLabel;
-    App(){
+    private JPanel[] passwordPanels;
+    private SQLConnection connection;
+    App() throws SQLException{
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(800,800);
         this.setResizable(false);
         this.setTitle("CipherX");
         this.getContentPane().setBackground(BGCOLOR);
-        loadMasterPasswordScreen();
+        this.setLocationRelativeTo(null);
+        loadRootPasswordScreen();
         this.setVisible(true);
     }
     //Event Methods
@@ -37,8 +42,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
             }
             if ((Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField))){
                 SQLConnection connection = new SQLConnection(String.valueOf(fristJPasswordField.getPassword()));
+                this.connection = connection;
                 if (connection.getConnectionStatus()) {
-                    runstartup();
+                        runstartup();
                 } else { 
                     verifyLabel.setText("Password Incorrect");
                 }
@@ -46,9 +52,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 verifyLabel.setText("Passwords Must Match");
             }
         }
-        if (e.getSource() == swapButton){
+        if (e.getSource() == viewButton){
             swap(firstPsTextField, fristJPasswordField);
-        } else if (e.getSource() == swapButton1){
+        } else if (e.getSource() == viewButton1){
             swap(secondTextField, secondJPasswordField);
         }
     }
@@ -61,8 +67,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
     public void keyReleased(KeyEvent e) {
         
     }
-    private void runstartup() {
+    private void runstartup(){
         clearFrame();
+        try {
+            System.out.println(connection.connection.isClosed()); //debug SQL connection
+        } catch (SQLException e){
+            System.out.println(e);
+        }
         loadMainScreen();
     }
     //GUI Methods
@@ -82,7 +93,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             jPasswordField.setVisible(false);
         }
     }
-    private void loadMasterPasswordScreen(){
+    private void loadRootPasswordScreen(){
         this.setLayout(new GridLayout(3,1,0,10));
 
         JPanel IntroPanel = new JPanel();
@@ -114,19 +125,19 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPsTextField.setBounds(10,43,150,40);
         firstPsTextField.setVisible(false);
 
-        swapButton = new JButton();
-        swapButton.setText("View");
-        swapButton.setFocusable(false);
-        swapButton.setBounds(165, 43, 80, 40);
-        swapButton.setFont((new Font(FONT,Font.BOLD, 16)));
-        swapButton.addActionListener(this);
+        viewButton = new JButton();
+        viewButton.setText("View");
+        viewButton.setFocusable(false);
+        viewButton.setBounds(165, 43, 80, 40);
+        viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
+        viewButton.addActionListener(this);
         
         JPanel firstPasswordFieldPanel = new JPanel();
         firstPasswordFieldPanel.setLayout(null);
         firstPasswordFieldPanel.setBackground(BGCOLOR);
         firstPasswordFieldPanel.add(fristJPasswordField);
         firstPasswordFieldPanel.add(firstPsTextField);
-        firstPasswordFieldPanel.add(swapButton);
+        firstPasswordFieldPanel.add(viewButton);
 
         JLabel secondPasswordLabel = new JLabel("Re-enter Root Password");
         secondPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
@@ -145,19 +156,19 @@ public class App extends JFrame implements ActionListener, KeyListener{
         secondTextField.setBounds(10,43,150,40);
         secondTextField.setVisible(false);
 
-        swapButton1 = new JButton();
-        swapButton1.setText("View");
-        swapButton1.setFocusable(false);
-        swapButton1.setBounds(165, 43, 80, 40);
-        swapButton1.setFont((new Font(FONT,Font.BOLD, 16)));
-        swapButton1.addActionListener(this);
+        viewButton1 = new JButton();
+        viewButton1.setText("View");
+        viewButton1.setFocusable(false);
+        viewButton1.setBounds(165, 43, 80, 40);
+        viewButton1.setFont((new Font(FONT,Font.BOLD, 16)));
+        viewButton1.addActionListener(this);
 
         JPanel secondPasswordFieldPanel = new JPanel();
         secondPasswordFieldPanel.setLayout(null);
         secondPasswordFieldPanel.setBackground(BGCOLOR);
         secondPasswordFieldPanel.add(secondJPasswordField);
         secondPasswordFieldPanel.add(secondTextField);
-        secondPasswordFieldPanel.add(swapButton1);
+        secondPasswordFieldPanel.add(viewButton1);
 
         JPanel submitPanel = new JPanel();
         submitPanel.setBackground(BGCOLOR);
@@ -168,7 +179,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         verifyLabel.setFont(new Font(FONT,Font.BOLD, 16));
         verifyLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        submitButton = new JButton("Submit");
+        submitButton = new JButton("Enter");
         submitButton.setFocusable(false);
         submitButton.setFont(new Font(FONT,Font.BOLD, 16));
         submitButton.addActionListener(this);
@@ -196,6 +207,87 @@ public class App extends JFrame implements ActionListener, KeyListener{
          *   option to remove, view, and edit. Also each password
          *   has a label to intendify password
          * -Change MasterPassword
-         */
+        */
+
+        this.setLayout(new BorderLayout());
+        this.getContentPane().setBackground(BGCOLOR);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(BGCOLOR);
+        buttonPanel.setLayout(null);
+        buttonPanel.setPreferredSize(new Dimension(800,100));
+
+        JButton createPassButton = new JButton("Create New Password");
+        createPassButton.setBounds(10,10,170,50);
+        createPassButton.setFocusable(false);
+        createPassButton.addActionListener(this);
+
+        JButton changeRootPassButton = new JButton("Change Root Password");
+        changeRootPassButton.setBounds(430,10,170,50);
+        changeRootPassButton.setFocusable(false);
+        changeRootPassButton.addActionListener(this);
+
+        JButton LogoutButton = new JButton("Logout");
+        LogoutButton.setBounds(610,10,160,50);
+        LogoutButton.setFocusable(false);
+        LogoutButton.addActionListener(this);
+
+        buttonPanel.add(createPassButton);
+        buttonPanel.add(changeRootPassButton);
+        buttonPanel.add(LogoutButton);
+
+        this.add(buttonPanel, BorderLayout.NORTH);
+
+        JPanel passwordPanel = new JPanel();
+        passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.Y_AXIS));
+        passwordPanel.setBorder(BorderFactory.createLineBorder(BGCOLOR, 0));
+        passwordPanel.setBackground(BGCOLOR);
+
+        loadPasswords(passwordPanel);
+        
+        this.add(new JScrollPane(passwordPanel), BorderLayout.CENTER);
+        this.setVisible(true);
+         
+    }
+    private void loadPasswords(JPanel ALLpasswordPanel){
+        this.passwordPanels = new JPanel[10/*connection.getRowCount()*/];
+        for (int i=0; i<passwordPanels.length; i++){
+            JPanel passwordPanel = new JPanel();
+            passwordPanel.setBackground(BGCOLOR);
+
+            JLabel passwordTagLabel = new JLabel("myPassword   ");
+            passwordTagLabel.setFont(new Font(FONT, Font.PLAIN, 22));
+
+            JPasswordField passwordPasswordField = new JPasswordField("notVerySecure");
+            passwordPasswordField.setFont(new Font(FONT, Font.PLAIN, 22));
+            passwordPasswordField.setEditable(false);
+
+            JButton viewButton = new JButton("View");
+            viewButton.setFocusable(false);
+            viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            viewButton.addActionListener(this);
+
+            JButton editButton = new JButton("Edit");
+            editButton.setFocusable(false);
+            editButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            editButton.addActionListener(this);
+
+            JButton removeButton = new JButton("X");
+            removeButton.setFocusable(false);
+            removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            removeButton.addActionListener(this);
+
+            passwordPanel.add(Box.createRigidArea(new Dimension(0, 75)));
+
+            passwordPanel.add(passwordTagLabel);
+            passwordPanel.add(passwordPasswordField);
+            passwordPanel.add(viewButton);
+            passwordPanel.add(editButton);
+            passwordPanel.add(removeButton);
+            ALLpasswordPanel.add(passwordPanel);
+
+            passwordPanels[i] = passwordPanel;
+        }
+        System.out.println(Arrays.toString(passwordPanels));
     }
 }
