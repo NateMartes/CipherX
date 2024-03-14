@@ -17,7 +17,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private JButton submitButton;
     private JLabel verifyLabel;
     private JPanel[] passwordPanels;
-    private SQLConnection connection;
     App() throws SQLException{
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(800,800);
@@ -42,11 +41,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
             }
             if ((Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField))){
                 SQLConnection connection = new SQLConnection(String.valueOf(fristJPasswordField.getPassword()));
-                this.connection = connection;
-                if (connection.getConnectionStatus()) {
-                        runstartup();
-                } else { 
-                    verifyLabel.setText("Password Incorrect");
+                try {
+                    if (!(SQLConnection.getConnection().isClosed())){
+                            runstartup();
+                    } else { 
+                        verifyLabel.setText("Password Incorrect");
+                    }
+                } catch (SQLException e1) {
+                    System.out.println(e1);
                 }
             } else {
                 verifyLabel.setText("Passwords Must Match");
@@ -69,11 +71,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
     }
     private void runstartup(){
         clearFrame();
-        try {
-            System.out.println(connection.connection.isClosed()); //debug SQL connection
-        } catch (SQLException e){
-            System.out.println(e);
-        }
         loadMainScreen();
     }
     //GUI Methods
@@ -250,7 +247,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
          
     }
     private void loadPasswords(JPanel ALLpasswordPanel){
-        this.passwordPanels = new JPanel[10/*connection.getRowCount()*/];
+        try {
+            this.passwordPanels = new JPanel[SQLConnection.getRowCount()/* Change this to some number to see passowrd panels*/];
+        } catch (SQLException e){
+            System.out.println(e);
+        }
         for (int i=0; i<passwordPanels.length; i++){
             JPanel passwordPanel = new JPanel();
             passwordPanel.setBackground(BGCOLOR);
@@ -288,6 +289,5 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             passwordPanels[i] = passwordPanel;
         }
-        System.out.println(Arrays.toString(passwordPanels));
     }
 }

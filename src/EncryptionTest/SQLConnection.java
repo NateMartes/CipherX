@@ -3,14 +3,14 @@ import java.sql.*;
 public class SQLConnection {
     private static final String URL = "jdbc:mysql://localhost:3306";
     private static final String USER = "root";
-    public Connection connection;
-    private boolean connectionStatus = false;
+    private static Connection connection;
+    private static Statement stmt;
     SQLConnection(String password) {
-        try (Connection connection = DriverManager.getConnection(URL, USER, password);)
+        try 
             {
+                connection = DriverManager.getConnection(URL, USER, password);
+                stmt = connection.createStatement();
                 System.out.println("Successfully Connected to Database");
-                this.connection = connection;
-                this.connectionStatus = true;
                 if (!(doesDatabaseExist())){
                     setupDatabase();
                 }
@@ -18,41 +18,38 @@ public class SQLConnection {
              System.out.println(e);
         }
     }
-    public boolean getConnectionStatus(){
-        return connectionStatus;
+    public static Connection getConnection() {
+        return connection;
     }
-    private boolean doesDatabaseExist() throws SQLException{
-        String query = "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = 'user'";
-        Statement stmt = connection.createStatement();
+    private static boolean doesDatabaseExist() throws SQLException{
+        String query = "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = 'cipherX'";
         ResultSet resultSet = stmt.executeQuery(query);
         return resultSet.next();
 
     }
-    private void setupDatabase() throws SQLException {
-        String query = "CREATE DATABASE user";
-        Statement stmt = connection.createStatement();
+    private static void setupDatabase() throws SQLException {
+        String query = "CREATE DATABASE cipherX";
         stmt.executeUpdate(query);
-        query = "USE user";
+        query = "USE cipherX";
         stmt.executeUpdate(query);
         query = "CREATE TABLE passwords (tag_name VARCHAR(100), password VARCHAR(255), passKey VARCHAR(255))";
-        stmt.executeUpdate(query);   
-        stmt.close();   
+        stmt.executeUpdate(query);     
     }
-    private void changeRootPassword() throws SQLException{
+    private static void changeRootPassword() throws SQLException{
         String query = "ALTER USER 'root'@'localhost' IDENTIFIED BY _______"; //_______ is new root password
-        Statement stmt = connection.createStatement();
         stmt.executeUpdate(query);
-        stmt.close();
     }
-    private ResultSet getRows() throws SQLException{
-        Statement stmt = connection.createStatement();
-        String query = "SELECT * FROM user";
+    private static ResultSet getRows() throws SQLException{
+        String query = "USE cipherX";
+        stmt.executeUpdate(query);
+        query = "SELECT * FROM passwords";
         ResultSet rows = stmt.executeQuery(query);
         return rows;
     }
-    public int getRowCount() throws SQLException{
-        Statement stmt = connection.createStatement();
-        String query = "SELECT COUNT(*) AS rowCount FROM user";
+    public static int getRowCount() throws SQLException{
+        String query = "USE cipherX";
+        stmt.executeUpdate(query);
+        query = "SELECT COUNT(*) AS rowCount FROM passwords";
         ResultSet rows = stmt.executeQuery(query);
         int rowCount = 0;
         while (rows.next()){
