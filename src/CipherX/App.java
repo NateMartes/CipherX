@@ -19,6 +19,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private TextField secondTextField;
     private JButton viewButton;
     private JButton viewButton1;
+    private JButton createPassButton;
+    private JButton changeRootPassButton;
+    private JButton LogoutButton;
     private JButton submitButton;
     private JLabel verifyLabel;
     private JPanel[] passwordPanels;
@@ -55,7 +58,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             if ((Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField)) && Encryption.notEmpty(fristJPasswordField) && Encryption.notEmpty(secondJPasswordField)){
                 try {
                     //Calls SQLConnection class to connect with local MySQL database
-                    databaseConnection = new SQLConnection("root",String.valueOf(fristJPasswordField.getPassword()));
+                    databaseConnection = new SQLConnection("root", String.valueOf(fristJPasswordField.getPassword()));
                     runstartup();
                 } catch (SQLException e1) {
                     if ((e1.toString()).equals("java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)")){
@@ -75,16 +78,29 @@ public class App extends JFrame implements ActionListener, KeyListener{
         } else if (e.getSource() == viewButton1){
             swap(secondTextField, secondJPasswordField);
         }
+        if (e.getSource() == createPassButton) {
+            // create new password (Zack)
+        }
+        if (e.getSource() == changeRootPassButton) {
+            // change root password (Zack)
+        }
+        if (e.getSource() == LogoutButton) {
+            // log out of SQL database & return to login screen (Zack)
+            try {
+                databaseConnection.exitDatabase(); // attempt to exit database
+            } catch (SQLException e1) {
+                System.out.println(e1.toString()); // print error on fail
+            }
+            // Change screen to login screen
+            clearFrame();
+            loadRootPasswordScreen();
+            this.revalidate();
+            this.repaint();
+        }
     }
-    public void keyTyped(KeyEvent e) {
-        
-    }
-    public void keyPressed(KeyEvent e) {
-
-    }
-    public void keyReleased(KeyEvent e) {
-        
-    }
+    public void keyTyped(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {}
     private void runstartup(){
         /**
          * calls startup methods
@@ -145,7 +161,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
         IntroPanel.add(IntroLabel);
         IntroPanel.setBackground(BGCOLOR);
         
-
         JPanel passwordJPanel = new JPanel(new GridLayout(2,2, 20, 0));
         passwordJPanel.setBackground(BGCOLOR);
 
@@ -252,17 +267,17 @@ public class App extends JFrame implements ActionListener, KeyListener{
         buttonPanel.setLayout(null);
         buttonPanel.setPreferredSize(new Dimension(800,100));
 
-        JButton createPassButton = new JButton("Create New Password");
+        createPassButton = new JButton("Create New Password");
         createPassButton.setBounds(10,10,170,50);
         createPassButton.setFocusable(false);
         createPassButton.addActionListener(this);
 
-        JButton changeRootPassButton = new JButton("Change Root Password");
+        changeRootPassButton = new JButton("Change Root Password");
         changeRootPassButton.setBounds(430,10,170,50);
         changeRootPassButton.setFocusable(false);
         changeRootPassButton.addActionListener(this);
 
-        JButton LogoutButton = new JButton("Logout");
+        LogoutButton = new JButton("Logout");
         LogoutButton.setBounds(610,10,160,50);
         LogoutButton.setFocusable(false);
         LogoutButton.addActionListener(this);

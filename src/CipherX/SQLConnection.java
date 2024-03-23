@@ -151,4 +151,15 @@ public class SQLConnection {
         }
         return rowCount;
     }
+
+    public void exitDatabase() throws SQLException {
+        /*
+         * Closes the SQL connection (Zack)
+         * 
+         * @param none
+         * @return none
+         */
+        connection.close();
+        System.out.println("Successfully Terminated Connection to Database");
+    }
 }
