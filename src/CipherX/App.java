@@ -85,7 +85,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // change root password (Zack)
         }
         if (e.getSource() == LogoutButton) {
-            // log out of SQL database & return to login screen (Zack)
+            // log out of SQL database & return to login screen (Zack) -- Complete
             try {
                 databaseConnection.exitDatabase(); // attempt to exit database
             } catch (SQLException e1) {
