@@ -2,17 +2,36 @@ package EncryptionTest;
 import java.util.*;
 import javax.swing.*;
 
+
+/**
+ * Encryption
+ * 
+ * Contains all methods needed for encrypting passwords and verifying
+ * attributes of passwords.
+ * 
+ */
 public class Encryption {
     private char[] asciiTable;
     private char[] key;
-    private String password;
+    private char[] password;
     private Random random;
     Encryption(String password){
-        this.password = password;
+        /**
+         * takes password and calls methods for encrypting password.
+         * 
+         * @param password: String which contains plaintext password
+         */
+        this.password = password.toCharArray();
         createKey();
         encryptPassword();
     }
     private void createKey(){
+        /**
+         * Creates password key by shuffling ascii table (One time pad).
+         * 
+         * @param none
+         * @return none
+         */
         //Create ASCII table
         char[] asciiTable = new char[95];
         for (char i=' '; i<127; i++){
@@ -40,7 +59,13 @@ public class Encryption {
         this.key = key;
     }
     private void encryptPassword(){
-        char[] passwordArray = password.toCharArray();
+        /**
+         * Uses created password key and plaintext password and encrypts password.
+         * 
+         * @param none
+         * @return none
+         */
+        char[] passwordArray = password;
         for (int i=0; i<passwordArray.length; i++){
             for (int j=0; j<asciiTable.length; j++){
                 if (asciiTable[j] == passwordArray[i]){
@@ -49,10 +74,43 @@ public class Encryption {
                 }
             }
         }
-        this.password = String.valueOf(passwordArray);
+        this.password = passwordArray;
     }
-    private void decryptPassword(){
-        char[] passwordArray = password.toCharArray();
+    public String getPassword(){
+        /**
+         * clear password field and returns encrypted password
+         * 
+         * this method is intented to be call right after initialization of encrpytion class.
+         * 
+         * @param none
+         * @return tmp : containig encryted password
+         */
+        String tmp = String.valueOf(password);
+        Arrays.fill(password, '\0');  //wipe ecrypted password from object's field
+        return tmp;
+    }
+    public String getKey(){
+        /**
+         * clear key field and returns password key
+         * 
+         * this method is intented to be call right after initialization of encrpytion class.
+         * 
+         * @param none
+         * @return tmp : containig password key
+         */
+        String tmp = String.valueOf(key);
+        Arrays.fill(key, '\0');
+        return tmp;
+    }
+    private char[] decryptPassword(char[] passwordArray,  char[] key){
+        /**
+         * decrpyts password (assumming password passed is encrypted).
+         * 
+         * @param passwordArray : char[] containing encrypted password
+         * @param key : char[] containing password key
+         * 
+         * @return passwordArray : decrypted password
+         */
         for (int i=0; i<passwordArray.length; i++){   
             for (int j=0; j<key.length; j++){
                 if (key[j] == passwordArray[i]){
@@ -61,12 +119,38 @@ public class Encryption {
                 }
             }
         }
-        this.password = String.valueOf(passwordArray);
+        return passwordArray;
     }
     public static boolean checkTextMacthes(JPasswordField a, JPasswordField b){
+        /**
+         * validates that both passwords from JPasswordFields are the same.
+         * 
+         * @param a : JPasswordField containing text
+         * @param b : JPasswordField containing text
+         * 
+         * @returns boolean: true if passwords are the same; otherwise false
+         */
         return (String.valueOf(a.getPassword())).equals(String.valueOf(b.getPassword()));
     }
+    public static boolean notEmpty(JPasswordField a){
+        /**
+         * validates that JPasswordField is not empty (!= "").
+         * 
+         * @param a : JPasswordField possibly containting text
+         * 
+         * @returns boolean: true if JPasswordField is not empty; otherwise false
+         */
+        System.out.println(!(String.valueOf(a.getPassword())).equals(""));
+        return !(String.valueOf(a.getPassword())).equals("");
+    }
     public static boolean checkPasswordRequirments(JPasswordField a){
+        /**
+         * validates that JPasswordField meets requierments in method.
+         * 
+         * @param a : JPasswordField containting text
+         * 
+         * @returns boolean: true if JPasswordField is passes requierments; otherwise false
+         */
         //Length 8, 1 symbol, 1 uppercase char
         String password = String.valueOf(a.getPassword());
         if (!(password.length() >= 8)){

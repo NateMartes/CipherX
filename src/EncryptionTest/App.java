@@ -1,10 +1,15 @@
 package EncryptionTest;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLException;
-import java.util.*;
+import java.sql.*;
 import javax.swing.*;
 
+/**
+ * 
+ * App
+ * 
+ * Contains All GUI methods visible to the user.
+ */
 public class App extends JFrame implements ActionListener, KeyListener{
     public static final Color BGCOLOR = new Color(0x757981);
     public static final String FONT = "Verdana";
@@ -17,7 +22,15 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private JButton submitButton;
     private JLabel verifyLabel;
     private JPanel[] passwordPanels;
-    App() throws SQLException{
+    private SQLConnection databaseConnection;
+    App() {
+        /**
+         * Constructs app's JFrame and add necessities needed for JFrame
+         * 
+         * @param none
+         * 
+         * @return none
+         */
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(800,800);
         this.setResizable(false);
@@ -39,19 +52,22 @@ public class App extends JFrame implements ActionListener, KeyListener{
             if (secondTextField.isVisible()) {
                 swap(secondTextField, secondJPasswordField);
             }
-            if ((Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField))){
-                SQLConnection connection = new SQLConnection(String.valueOf(fristJPasswordField.getPassword()));
+            if ((Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField)) && Encryption.notEmpty(fristJPasswordField) && Encryption.notEmpty(secondJPasswordField)){
                 try {
-                    if (!(SQLConnection.getConnection().isClosed())){
-                            runstartup();
-                    } else { 
-                        verifyLabel.setText("Password Incorrect");
-                    }
+                    //Calls SQLConnection class to connect with local MySQL database
+                    databaseConnection = new SQLConnection("root",String.valueOf(fristJPasswordField.getPassword()));
+                    runstartup();
                 } catch (SQLException e1) {
-                    System.out.println(e1);
+                    if ((e1.toString()).equals("java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)")){
+                        verifyLabel.setText("Password Incorrect");
+                    } else {
+                        verifyLabel.setText(e1.toString());
+                    }
                 }
-            } else {
+            } else if (!(Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField))){
                 verifyLabel.setText("Passwords Must Match");
+            } else {
+                verifyLabel.setText("Empty Password Field");
             }
         }
         if (e.getSource() == viewButton){
@@ -70,16 +86,37 @@ public class App extends JFrame implements ActionListener, KeyListener{
         
     }
     private void runstartup(){
+        /**
+         * calls startup methods
+         * 
+         * @param none
+         * @return none
+         */
         clearFrame();
         loadMainScreen();
     }
     //GUI Methods
     private void clearFrame(){
+        /**
+         * clears JFrame of all components
+         * 
+         * @param none
+         * @return none
+         */
         this.getContentPane().removeAll();
-        this.revalidate(); //recomputes layout of componets in frame
-        this.repaint(); //redraws components to frame
+        this.revalidate();
+        this.repaint();
     }
     private void swap(TextField textField, JPasswordField jPasswordField){
+        /**
+         * swap JPassword Field with TextField for a user to view password.
+         * whichever Field is visible will become invisible and the other will become visible.
+         * this assumes that only one of the fields is visible
+         * 
+         * @param jPasswordFiled : JPasswordField to be swapped with textField
+         * @param textField : TextField to be swapped with jPasswordField
+         * @return none
+         */
         if (textField.isVisible()){
             textField.setVisible(false);
             jPasswordField.setText(textField.getText());
@@ -91,6 +128,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
         }
     }
     private void loadRootPasswordScreen(){
+        /**
+         * adds GUI components to JFrame needed for root password screen.
+         * 
+         * @param none
+         * @return none
+         * 
+         */
         this.setLayout(new GridLayout(3,1,0,10));
 
         JPanel IntroPanel = new JPanel();
@@ -195,19 +239,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.add(submitPanel);
     }
     private void loadMainScreen(){
-        /*
-         * Compoents needed
+        /**
+         * adds GUI comopenets needed for main screen.
          * 
-         * - Add password btn
-         * - Password List
-         *   List of passwords, with each of them having the 
-         *   option to remove, view, and edit. Also each password
-         *   has a label to intendify password
-         * -Change MasterPassword
-        */
-
+         * @param none
+         * @return none
+         */
         this.setLayout(new BorderLayout());
-        this.getContentPane().setBackground(BGCOLOR);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(BGCOLOR);
@@ -247,19 +285,36 @@ public class App extends JFrame implements ActionListener, KeyListener{
          
     }
     private void loadPasswords(JPanel ALLpasswordPanel){
+        /**
+         * adds JPanels contanting components tied to user entered passwords to ALLpasswordPanel.
+         * 
+         * @param ALLpasswordPanel : main password JPanel where all sub JPanels will be added to.
+         * @return none
+         */
         try {
-            this.passwordPanels = new JPanel[SQLConnection.getRowCount()/* Change this to some number to see passowrd panels*/];
+            this.passwordPanels = new JPanel[databaseConnection.getRowCount()/* Change this to some number to see passowrd panels*/];
         } catch (SQLException e){
             System.out.println(e);
         }
         for (int i=0; i<passwordPanels.length; i++){
+            //Create JPanel and add components
             JPanel passwordPanel = new JPanel();
             passwordPanel.setBackground(BGCOLOR);
 
-            JLabel passwordTagLabel = new JLabel("myPassword   ");
+            JLabel passwordTagLabel = new JLabel("No tag_name found");
+            try {
+                passwordTagLabel.setText(databaseConnection.getColumnData("tag_name", i+1)+"   ");
+            } catch (SQLException e){
+                System.out.println(e);
+            }
             passwordTagLabel.setFont(new Font(FONT, Font.PLAIN, 22));
 
-            JPasswordField passwordPasswordField = new JPasswordField("notVerySecure");
+            JPasswordField passwordPasswordField = new JPasswordField("No password found");
+            try {
+                passwordPasswordField.setText(databaseConnection.getColumnData("tag_name", i+1)+"   ");
+            } catch (SQLException e){
+                System.out.println(e);
+            }
             passwordPasswordField.setFont(new Font(FONT, Font.PLAIN, 22));
             passwordPasswordField.setEditable(false);
 
@@ -288,6 +343,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
             ALLpasswordPanel.add(passwordPanel);
 
             passwordPanels[i] = passwordPanel;
+            //passwordPanels.getComponents() returns :
+            //{Box$Filler, JLabel, JPasswordField, JButton (view), JButton (edit), JButton (remove)}
+            
+            //Getting Components:
+            //JLabel component = (JLabel) passwordPanels[0].getComponents()[1];
         }
     }
 }
