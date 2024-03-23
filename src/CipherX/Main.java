@@ -1,4 +1,4 @@
-package EncryptionTest;
+package CipherX;
 import java.sql.*;
 
 public class Main {

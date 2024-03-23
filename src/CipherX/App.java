@@ -1,4 +1,4 @@
-package EncryptionTest;
+package CipherX;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
