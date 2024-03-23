@@ -102,7 +102,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     public void keyPressed(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
     private void runstartup(){
-        /**
+        /*
          * calls startup methods
          * 
          * @param none
