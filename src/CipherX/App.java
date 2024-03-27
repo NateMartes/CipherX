@@ -45,17 +45,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
     }
     //Event Methods
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == fristJPasswordField){
-            secondJPasswordField.requestFocus();
-        }
-        if (e.getSource() == submitButton){
+        if (e.getSource() == submitButton || e.getSource() == fristJPasswordField){
             if (firstPsTextField.isVisible()){
                 swap(firstPsTextField, fristJPasswordField);
             }
-            if (secondTextField.isVisible()) {
-                swap(secondTextField, secondJPasswordField);
-            }
-            if ((Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField)) && Encryption.notEmpty(fristJPasswordField) && Encryption.notEmpty(secondJPasswordField)){
+            if (Encryption.notEmpty(fristJPasswordField)){
                 try {
                     //Calls SQLConnection class to connect with local MySQL database
                     databaseConnection = new SQLConnection("root", String.valueOf(fristJPasswordField.getPassword()));
@@ -67,8 +61,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                         verifyLabel.setText(e1.toString());
                     }
                 }
-            } else if (!(Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField))){
-                verifyLabel.setText("Passwords Must Match");
             } else {
                 verifyLabel.setText("Empty Password Field");
             }
@@ -79,7 +71,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             swap(secondTextField, secondJPasswordField);
         }
         if (e.getSource() == createPassButton) {
-            // create new password (Zack)
+
         }
         if (e.getSource() == changeRootPassButton) {
             // change root password (Zack)
@@ -161,7 +153,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         IntroPanel.add(IntroLabel);
         IntroPanel.setBackground(BGCOLOR);
         
-        JPanel passwordJPanel = new JPanel(new GridLayout(2,2, 20, 0));
+        JPanel passwordJPanel = new JPanel(new GridLayout(1,2, 20, 0));
         passwordJPanel.setBackground(BGCOLOR);
 
         JLabel firstPasswordLabel = new JLabel("Enter Root Password");
@@ -172,7 +164,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         fristJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
         fristJPasswordField.addKeyListener(this);
         fristJPasswordField.addActionListener(this);
-        fristJPasswordField.setBounds(10,43,150,40);
+        fristJPasswordField.setBounds(10,103,150,40);
 
         firstPsTextField = new TextField();
         firstPsTextField.setFont(new Font(FONT,Font.BOLD,22));
@@ -184,7 +176,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         viewButton = new JButton();
         viewButton.setText("View");
         viewButton.setFocusable(false);
-        viewButton.setBounds(165, 43, 80, 40);
+        viewButton.setBounds(165, 103, 80, 40);
         viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
         viewButton.addActionListener(this);
         
@@ -194,37 +186,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPasswordFieldPanel.add(fristJPasswordField);
         firstPasswordFieldPanel.add(firstPsTextField);
         firstPasswordFieldPanel.add(viewButton);
-
-        JLabel secondPasswordLabel = new JLabel("Re-enter Root Password");
-        secondPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
-        secondPasswordLabel.setHorizontalAlignment(JLabel.RIGHT);
-
-        secondJPasswordField = new JPasswordField();
-        secondJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
-        secondJPasswordField.addKeyListener(this);
-        secondJPasswordField.addActionListener(this);
-        secondJPasswordField.setBounds(10,43,150,40);
-
-        secondTextField = new TextField();
-        secondTextField.setFont(new Font(FONT,Font.BOLD, 22));
-        secondTextField.addKeyListener(this);
-        secondTextField.addActionListener(this);
-        secondTextField.setBounds(10,43,150,40);
-        secondTextField.setVisible(false);
-
-        viewButton1 = new JButton();
-        viewButton1.setText("View");
-        viewButton1.setFocusable(false);
-        viewButton1.setBounds(165, 43, 80, 40);
-        viewButton1.setFont((new Font(FONT,Font.BOLD, 16)));
-        viewButton1.addActionListener(this);
-
-        JPanel secondPasswordFieldPanel = new JPanel();
-        secondPasswordFieldPanel.setLayout(null);
-        secondPasswordFieldPanel.setBackground(BGCOLOR);
-        secondPasswordFieldPanel.add(secondJPasswordField);
-        secondPasswordFieldPanel.add(secondTextField);
-        secondPasswordFieldPanel.add(viewButton1);
 
         JPanel submitPanel = new JPanel();
         submitPanel.setBackground(BGCOLOR);
@@ -243,8 +204,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         passwordJPanel.add(firstPasswordLabel);
         passwordJPanel.add(firstPasswordFieldPanel);
-        passwordJPanel.add(secondPasswordLabel);
-        passwordJPanel.add(secondPasswordFieldPanel);
 
         submitPanel.add(submitButton);
         submitPanel.add(verifyLabel);
@@ -365,4 +324,5 @@ public class App extends JFrame implements ActionListener, KeyListener{
             //JLabel component = (JLabel) passwordPanels[0].getComponents()[1];
         }
     }
+    
 }
