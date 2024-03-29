@@ -18,7 +18,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     public static final Color BGCOLOR = new Color(0x757981);
     public static final String FONT = "Verdana";
     private JLabel verifyLabel;
-    private boolean loginScreen, mainScreen, createPassScreen;
+    private Boolean loginScreen = false , mainScreen = false, createPassScreen = false;
     private ArrayList<Boolean> allScreens = new ArrayList<Boolean>();
     private ArrayList<Component> screenComponents = new ArrayList<Component>();
     private JPanel[] passwordPanels;
@@ -39,10 +39,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.getContentPane().setBackground(BGCOLOR);
         this.setLocationRelativeTo(null);
 
-        //Setup allScreens
+        //Setup all screens
         allScreens.add(loginScreen);
-        allScreens.add(mainScreen);
         allScreens.add(createPassScreen);
+        allScreens.add(mainScreen);
 
         loadLoginScreen();
         this.setVisible(true);
@@ -55,7 +55,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         System.out.println(c.getName());
         switch (c.getName()) {
             case "submitButton","firstJPasswordField","firstPsTextField":
-
+            if (loginScreen){
                 TextField textfield = null;
                 JPasswordField passwordField = null;
                 for (Component component : screenComponents){
@@ -63,19 +63,22 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     if (component.getName() == "firstJPasswordField"){passwordField = (JPasswordField) component;}
                 }
                 runstartup(textfield, passwordField);
+            } else if (createPassScreen){
+                validateInputOnCreatePassScreen(); 
+            }
+            break;
 
-                break;
             case "viewButton":
 
-                textfield = null;
-                passwordField = null;
+                TextField textfield = null;
+                JPasswordField passwordField = null;
                 for (Component component : screenComponents){
                     if (component.getName() == "firstPsTextField"){textfield = (TextField) component;}
                     if (component.getName() == "firstJPasswordField"){passwordField = (JPasswordField) component;}
                 }
                 swap(textfield, passwordField);
-
                 break;
+
             case "viewButton1":
 
                 textfield = null;
@@ -85,14 +88,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     if (component.getName() == "secondJPasswordField"){passwordField  = (JPasswordField) component;}
                 }
                 swap(textfield, passwordField);
-
                 break;
+
             case "createPassButton":
 
                 clearFrame();
                 loadCreatePassScreen();
-
                 break;
+
             case "changeRootPassButton":
 
                 // change root password (Zack)
@@ -111,14 +114,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 loadLoginScreen();
                 this.revalidate();
                 this.repaint();
-
                 break;
+
             case "goBackButton":
 
                 clearFrame();
                 loadMainScreen();
-
                 break;
+
             default:
                 System.err.println("No Case Found for this Componenet");
                 break;
@@ -164,11 +167,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
          */
         this.getContentPane().removeAll();
         removeAllComponents();
-        removeAllComponents();
+        resetVisibleScreen();
         this.revalidate();
         this.repaint();
     }
-    private void setCurrentVisibleScreen(boolean visibleScreen){
+    private void resetVisibleScreen(){
         /**
          * set visibleScreen to true and all other screens false as only
          * one visible screen can be visible at a time
@@ -176,14 +179,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @param visibleScreen : boolean to be set true that correlates to current visible screen
          * @return none
          */
-        for (int i=0; i<allScreens.size(); i++){
-            if (allScreens.get(i) == visibleScreen){
-                visibleScreen = true;
-                continue;
-            }
-            Boolean screen = allScreens.get(i);
-            screen = false;
-        }
+        loginScreen = false;
+        mainScreen = false;
+        createPassScreen = false;
     }
     private void saveComponent(Component component){
         /**
@@ -206,8 +204,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
             if (currentComponent instanceof JButton){
                 ((JButton) currentComponent).removeActionListener(this);
             }
-            if (currentComponent instanceof JTextField){
-                ((JTextField) currentComponent).removeKeyListener(this);
+            if (currentComponent instanceof TextField){
+                ((TextField) currentComponent).removeKeyListener(this);
+            }
+            if ((currentComponent instanceof TextField) && (currentComponent instanceof JPasswordField)){
+                System.out.println("hey");
             }
             screenComponents.remove(currentComponent);
             currentComponent = null;
@@ -232,6 +233,106 @@ public class App extends JFrame implements ActionListener, KeyListener{
             textField.setText(String.valueOf(jPasswordField.getPassword()));
             jPasswordField.setVisible(false);
         }
+    }
+    private JButton createButton(String name, String text, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates JButton with all reqiured methods
+         * 
+         * @param name : String name of the button
+         * @param text : String text in the Button
+         * @param fontSize : int font size of text in button. If fontsize is -1, use normal fontsize
+         * @param x : Int if container of button has a null layout, this is the x starting postion
+         * @param y : Int if container of button has a null layout, this is the y starting postion
+         * @param width : Int if container of button has a null layout, this is the width
+         * @param height : Int if container of button has a null layout, this is the height
+         * 
+         * @return newButton : JButton that was created
+         */
+        JButton newButton = new JButton(text);
+        newButton.addActionListener(this);
+        newButton.setFocusable(false);
+        if (fontSize != -1){
+            newButton.setFont(new Font(FONT, Font.BOLD, fontSize));
+        }
+        newButton.setBounds(x,y,width,height);
+        newButton.setName(name);
+        saveComponent(newButton);
+        return newButton;
+    }
+    private JLabel createLabel(String name, String text, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates JLabel with all reqiured methods
+         * 
+         * @param name : String name of the Label
+         * @param text : String text in the Label
+         * @param fontSize : Int size of text in Label
+         * @param x : Int if container of Label has a null layout, this is the x starting postion
+         * @param y : Int if container of Label has a null layout, this is the y starting postion
+         * @param width : Int if container of Label has a null layout, this is the width
+         * @param height : Int if container of Label has a null layout, this is the height
+         * 
+         * @return newButton : JLabel that was created
+         */
+        JLabel newLabel = new JLabel(text);
+        newLabel.setFocusable(false);
+        newLabel.setFont(new Font(FONT, Font.BOLD, fontSize));
+        newLabel.setBounds(x,y,width,height);
+        newLabel.setName(name);
+        saveComponent(newLabel);
+        return newLabel;
+    }
+    private TextField createTextField(String name, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates TextField with all reqiured methods
+         * TextFields are set invisable at first as they are 
+         * meant to be paried with JPasswordFields
+         * 
+         * @param name : String name of the TextField
+         * @param fontSize : Int size of text in TextField
+         * @param x : Int if container of TextField has a null layout, this is the x starting postion
+         * @param y : Int if container of TextField has a null layout, this is the y starting postion
+         * @param width : Int if container of TextField has a null layout, this is the width
+         * @param height : Int if container of TextField has a null layout, this is the height
+         * 
+         * @return newTextField : TextField that was created
+         */
+        TextField newTextField = new TextField();
+        newTextField.setFont(new Font(FONT,Font.BOLD, fontSize));
+        newTextField.addKeyListener(this);
+        newTextField.addActionListener(this);
+        newTextField.setBounds(x,y,width,height);
+        newTextField.setVisible(false);
+        newTextField.setName(name);
+        saveComponent(newTextField);
+        return newTextField;
+    }
+    private JPasswordField createJPasswordField(String name, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates JPasswordField with all reqiured methods
+         * JPasswordFields are set visable at first as they are 
+         * meant to be paried with JPasswordFields
+         * 
+         * @param name : String name of the JPasswordField
+         * @param fontSize : Int size of text in JPasswordField
+         * @param x : Int if container of JPasswordField has a null layout, this is the x starting postion
+         * @param y : Int if container of JPasswordField has a null layout, this is the y starting postion
+         * @param width : Int if container of JPasswordField has a null layout, this is the width
+         * @param height : Int if container of JPasswordField has a null layout, this is the height
+         * 
+         * @return newJPasswordField : JPasswordField that was created
+         */
+        JPasswordField newJPasswordField = new JPasswordField();
+        newJPasswordField.setFont(new Font(FONT,Font.BOLD, fontSize));
+        newJPasswordField.addKeyListener(this);
+        newJPasswordField.addActionListener(this);
+        newJPasswordField.setBounds(x,y,width,height);
+        newJPasswordField.setVisible(true);
+        newJPasswordField.setName(name);
+        saveComponent(newJPasswordField);
+        return newJPasswordField;
+    }
+    private void validateInputOnCreatePassScreen(){
+
     }
     private void loadLoginScreen(){
         /**
@@ -284,7 +385,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         submitPanel.setName("submitPanel");
         saveComponent(submitPanel);
 
-        JLabel verifyLabel = createLabel("verifyLabel","", 16, 250, 25,300, 50);
+        verifyLabel = createLabel("verifyLabel","", 16, 250, 25,300, 50);
         verifyLabel.setHorizontalAlignment(JLabel.CENTER);
 
         JButton submitButton = createButton("submitButton", "Enter", 16, 350, 75, 100 ,50);
@@ -299,7 +400,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.add(passwordJPanel);
         this.add(submitPanel);
 
-        setCurrentVisibleScreen(loginScreen);
+        loginScreen = true;
 
     }
     private void loadMainScreen(){
@@ -341,7 +442,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.add(new JScrollPane(passwordPanel), BorderLayout.CENTER);
         this.setVisible(true);
 
-        setCurrentVisibleScreen(mainScreen);
+        mainScreen = true;
          
     }
     private void loadPasswords(JPanel ALLpasswordPanel){
@@ -620,7 +721,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JButton submitButton = createButton("submitButton", "Enter", 16, 170, 0, 100, 30);
 
-        JLabel verifyLabel = createLabel("verifyLabel", "", 16, 135, 50, 200, 20);
+        verifyLabel = createLabel("verifyLabel", "", 16, 135, 50, 200, 20);
 
         JPanel submitPanel = new JPanel();
         submitPanel.setLayout(null);
@@ -658,104 +759,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         
         this.setVisible(true);
 
-        setCurrentVisibleScreen(createPassScreen);
-    }
-    private JButton createButton(String name, String text, int fontSize, int x, int y, int width, int height){
-        /**
-         * Creates JButton with all reqiured methods
-         * 
-         * @param name : String name of the button
-         * @param text : String text in the Button
-         * @param fontSize : int font size of text in button. If fontsize is -1, use normal fontsize
-         * @param x : Int if container of button has a null layout, this is the x starting postion
-         * @param y : Int if container of button has a null layout, this is the y starting postion
-         * @param width : Int if container of button has a null layout, this is the width
-         * @param height : Int if container of button has a null layout, this is the height
-         * 
-         * @return newButton : JButton that was created
-         */
-        JButton newButton = new JButton(text);
-        newButton.addActionListener(this);
-        newButton.setFocusable(false);
-        if (fontSize != -1){
-            newButton.setFont(new Font(FONT, Font.BOLD, fontSize));
-        }
-        newButton.setBounds(x,y,width,height);
-        newButton.setName(name);
-        saveComponent(newButton);
-        return newButton;
-    }
-    private JLabel createLabel(String name, String text, int fontSize, int x, int y, int width, int height){
-        /**
-         * Creates JLabel with all reqiured methods
-         * 
-         * @param name : String name of the Label
-         * @param text : String text in the Label
-         * @param fontSize : Int size of text in Label
-         * @param x : Int if container of Label has a null layout, this is the x starting postion
-         * @param y : Int if container of Label has a null layout, this is the y starting postion
-         * @param width : Int if container of Label has a null layout, this is the width
-         * @param height : Int if container of Label has a null layout, this is the height
-         * 
-         * @return newButton : JLabel that was created
-         */
-        JLabel newLabel = new JLabel(text);
-        newLabel.setFocusable(false);
-        newLabel.setFont(new Font(FONT, Font.BOLD, fontSize));
-        newLabel.setBounds(x,y,width,height);
-        newLabel.setName(name);
-        saveComponent(newLabel);
-        return newLabel;
-    }
-    private TextField createTextField(String name, int fontSize, int x, int y, int width, int height){
-        /**
-         * Creates TextField with all reqiured methods
-         * TextFields are set invisable at first as they are 
-         * meant to be paried with JPasswordFields
-         * 
-         * @param name : String name of the TextField
-         * @param fontSize : Int size of text in TextField
-         * @param x : Int if container of TextField has a null layout, this is the x starting postion
-         * @param y : Int if container of TextField has a null layout, this is the y starting postion
-         * @param width : Int if container of TextField has a null layout, this is the width
-         * @param height : Int if container of TextField has a null layout, this is the height
-         * 
-         * @return newTextField : TextField that was created
-         */
-        TextField newTextField = new TextField();
-        newTextField.setFont(new Font(FONT,Font.BOLD, fontSize));
-        newTextField.addKeyListener(this);
-        newTextField.addActionListener(this);
-        newTextField.setBounds(x,y,width,height);
-        newTextField.setVisible(false);
-        newTextField.setName(name);
-        saveComponent(newTextField);
-        return newTextField;
-    }
-    private JPasswordField createJPasswordField(String name, int fontSize, int x, int y, int width, int height){
-        /**
-         * Creates JPasswordField with all reqiured methods
-         * JPasswordFields are set visable at first as they are 
-         * meant to be paried with JPasswordFields
-         * 
-         * @param name : String name of the JPasswordField
-         * @param fontSize : Int size of text in JPasswordField
-         * @param x : Int if container of JPasswordField has a null layout, this is the x starting postion
-         * @param y : Int if container of JPasswordField has a null layout, this is the y starting postion
-         * @param width : Int if container of JPasswordField has a null layout, this is the width
-         * @param height : Int if container of JPasswordField has a null layout, this is the height
-         * 
-         * @return newJPasswordField : JPasswordField that was created
-         */
-        JPasswordField newJPasswordField = new JPasswordField();
-        newJPasswordField.setFont(new Font(FONT,Font.BOLD, fontSize));
-        newJPasswordField.addKeyListener(this);
-        newJPasswordField.addActionListener(this);
-        newJPasswordField.setBounds(x,y,width,height);
-        newJPasswordField.setVisible(true);
-        newJPasswordField.setName(name);
-        saveComponent(newJPasswordField);
-        return newJPasswordField;
+        createPassScreen = true;
     }
 
 }
