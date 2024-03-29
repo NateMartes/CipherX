@@ -66,11 +66,64 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
     //Event Methods
     public void actionPerformed(ActionEvent e) {
+<<<<<<< Updated upstream
         if (e.getSource() == submitButton || e.getSource() == fristJPasswordField){
             if (firstPsTextField.isVisible()){
                 swap(firstPsTextField, fristJPasswordField);
             }
             if (Encryption.notEmpty(fristJPasswordField)){
+=======
+        Component c = ((Component) e.getSource());
+        System.out.println(c.getName());
+        switch (c.getName()) {
+            case "submitButton","firstJPasswordField","firstPsTextField":
+            if (loginScreen) {
+                JTextField textfield = null;
+                JPasswordField passwordField = null;
+                for (Component component : screenComponents){
+                    if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
+                    if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
+                }
+                runstartup(textfield, passwordField);
+            } else if (createPassScreen){
+                validateInputOnCreatePassScreen(); 
+            }
+            break;
+
+            case "viewButton":
+            JTextField textfield = null;
+            JPasswordField passwordField = null;
+            for (Component component : screenComponents){
+                if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
+                if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
+            }
+            swap(textfield, passwordField);
+            break;
+
+            case "viewButton1":
+
+                textfield = null;
+                passwordField = null;
+                for (Component component : screenComponents){
+                    if (component.getName() == "secondTextField"){textfield = (JTextField) component;}
+                    if (component.getName() == "secondJPasswordField"){passwordField  = (JPasswordField) component;}
+                }
+                swap(textfield, passwordField);
+                break;
+
+            case "createPassButton":
+
+                clearFrame();
+                loadCreatePassScreen();
+                break;
+
+            case "changeRootPassButton":
+
+                // TODO: change root password 
+
+                break;
+            case "LogoutButton":
+>>>>>>> Stashed changes
                 try {
                     //Calls SQLConnection class to connect with local MySQL database
                     databaseConnection = new SQLConnection("root", String.valueOf(fristJPasswordField.getPassword()));
@@ -415,7 +468,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @return none
          */
         try {
-            this.passwordPanels = new JPanel[databaseConnection.getRowCount()/* Change this to some number to see passowrd panels*/];
+            this.passwordPanels = new JPanel[databaseConnection.getRowCount() /* Change this to some number to see passowrd panels*/];
         } catch (SQLException e){
             System.out.println(e);
         }
@@ -442,10 +495,12 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             JPasswordField passwordPasswordField = new JPasswordField("No password found");
             try {
-                passwordPasswordField.setText(databaseConnection.getColumnData("password", i+1)+"   ");
-            } catch (SQLException e){
+                databaseConnection.getColumnData("password", i+1); // Verify existance of a password
+                passwordPasswordField.setText("**********");
+            } catch (SQLException e) {
                 System.out.println(e);
             }
+
             passwordPasswordField.setFont(new Font(FONT, Font.PLAIN, 22));
             passwordPasswordField.setEditable(false);
 
@@ -457,7 +512,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             copyButton.setFocusable(false);
             // copyButton.setFont((new Font(FONT,Font.BOLD, 18)));
             try {
-                Image copyImg = ImageIO.read(getClass().getResource("copy.png")); // edit as image icons become available
+                Image copyImg = ImageIO.read(getClass().getResource("copy.png")); // TODO: edit as image icons become available
                 copyButton.setIcon(new ImageIcon(copyImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -469,7 +524,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             JButton viewButton = new JButton(); // new JButton("View");
             viewButton.setFocusable(false);
             try {
-                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // edit as image icons become available
+                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // TODO: edit as image icons become available
                 viewButton.setIcon(new ImageIcon(viewImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -477,12 +532,24 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
             viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
             viewButton.setBorder(empty);
+<<<<<<< Updated upstream
+=======
+            try {
+                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // TODO: edit as image icons become available
+                viewButton.setIcon(new ImageIcon(viewImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            viewButton.setBorder(empty);
+>>>>>>> Stashed changes
             viewButton.addActionListener(this);
 
             JButton editButton = new JButton(); // new JButton("Edit");
             editButton.setFocusable(false);
             try {
-                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // edit as image icons become available
+                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // TODO: edit as image icons become available
                 editButton.setIcon(new ImageIcon(editImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -490,12 +557,24 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
             editButton.setPreferredSize(new Dimension(buttonW, buttonH));
             editButton.setBorder(empty);
+<<<<<<< Updated upstream
+=======
+            try {
+                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // TODO: edit as image icons become available
+                editButton.setIcon(new ImageIcon(editImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            editButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            editButton.setBorder(empty);
+>>>>>>> Stashed changes
             editButton.addActionListener(this);
 
             JButton removeButton = new JButton(); // new JButton("X");
             removeButton.setFocusable(false);
             try {
-                Image delImg = ImageIO.read(getClass().getResource("del.png")); // edit as image icons become available
+                Image delImg = ImageIO.read(getClass().getResource("del.png")); // TODO: edit as image icons become available
                 removeButton.setIcon(new ImageIcon(delImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -503,6 +582,18 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
             removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
             removeButton.setBorder(empty);
+<<<<<<< Updated upstream
+=======
+            try {
+                Image delImg = ImageIO.read(getClass().getResource("del.png")); // TODO: edit as image icons become available
+                removeButton.setIcon(new ImageIcon(delImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            removeButton.setBorder(empty);
+>>>>>>> Stashed changes
             removeButton.addActionListener(this);
 
             passwordPanel.add(Box.createRigidArea(new Dimension(0, 75)));
@@ -589,10 +680,16 @@ public class App extends JFrame implements ActionListener, KeyListener{
         tagnameLabel.setBounds(0,17,150,30);
         tagnameLabel.setHorizontalAlignment(JLabel.LEFT);
 
+<<<<<<< Updated upstream
         tagnameTextField = new TextField();
         tagnameTextField.setFont(new Font(FONT,Font.BOLD, 16));
         tagnameTextField.addActionListener(this);
         tagnameTextField.setBounds(150,17,150,30);
+=======
+        JTextField tagnameTextField = createTextField("tagnameTextField", 16, 150, 17, 150, 30);
+        tagnameTextField.setDocument(new JLimitedTextField(12));
+        tagnameTextField.setVisible(true);
+>>>>>>> Stashed changes
 
         JPanel tagnameJPanel = new JPanel();
         tagnameJPanel.setLayout(null);
@@ -605,10 +702,16 @@ public class App extends JFrame implements ActionListener, KeyListener{
         usernameLabel.setBounds(0,17,150,30);
         usernameLabel.setHorizontalAlignment(JLabel.LEFT);
 
+<<<<<<< Updated upstream
         usernameTextField = new TextField();
         usernameTextField.setFont(new Font(FONT,Font.BOLD, 16));
         usernameTextField.addActionListener(this);
         usernameTextField.setBounds(150,17,150,30);
+=======
+        JTextField usernameTextField = createTextField("usernameTextField", 16, 150, 17, 150, 30);
+        // usernameTextField.setDocument(new JLimitedTextField(20)); //Limits character count in text
+        usernameTextField.setVisible(true);
+>>>>>>> Stashed changes
 
         JPanel usernameJPanel = new JPanel();
         usernameJPanel.setLayout(null);
