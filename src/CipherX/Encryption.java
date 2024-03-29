@@ -142,6 +142,16 @@ public class Encryption {
          */
         return !(String.valueOf(a.getPassword())).equals("");
     }
+    public static boolean notEmpty(JTextField a){
+        /**
+         * validates that JTextField is not empty (!= "").
+         * 
+         * @param a : JTextField possibly containting text
+         * 
+         * @returns boolean: true if JTextField is not empty; otherwise false
+         */
+        return !(String.valueOf(a.getText())).equals("");
+    }
     public static boolean checkPasswordRequirments(JPasswordField a){
         /**
          * validates that JPasswordField meets requierments in method.

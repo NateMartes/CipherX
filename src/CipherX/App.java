@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -127,7 +126,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         /*
          * calls startup methods
          * 
-         * @param none
+         * @param firstPsTextField : JTextField which is in loginScreen
+         * @param firstJPasswordField : JPasswordField which is in loginScreen
          * @return none
          */
         if (firstPsTextField.isVisible()){
@@ -150,7 +150,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             verifyLabel.setText("Empty Password Field");
         }
     }
-    //GUI Methods
     private void clearFrame(){
         /**
          * clears JFrame of all components
@@ -321,8 +320,88 @@ public class App extends JFrame implements ActionListener, KeyListener{
         return newJPasswordField;
     }
     private void validateInputOnCreatePassScreen(){
+        /**
+         * Validates all textfield and JPasswrod Field inputs and if correct
+         * Saves data and returns to main screen
+         * 
+         * @param none
+         * @return none
+         */
+        //Get Compoenets
+        JTextField tagNameTextField = null;
+        JTextField usernameTextField = null;
+        JPasswordField password1JPasswordField= null;
+        JTextField password1TextField = null;
+        JPasswordField password2JPasswordField= null;
+        JTextField password2TextField = null;
+        
+        for (Component component : screenComponents ){
+            if (component.getName() == "tagnameTextField"){tagNameTextField = (JTextField) component;}
+            if (component.getName() == "usernameTextField"){usernameTextField = (JTextField) component;}
+            if (component.getName() == "firstJPasswordField"){password1JPasswordField = (JPasswordField) component;}
+            if (component.getName() == "firstPsTextField"){password1TextField = (JTextField) component;}
+            if (component.getName() == "secondJPasswordField"){password2JPasswordField = (JPasswordField) component;}
+            if (component.getName() == "secondTextField"){password2TextField = (JTextField) component;}   
+        }
+        //swap and reswap fields to ensure both fields have the same string
+        swap(password1TextField, password1JPasswordField);
+        swap(password1TextField, password1JPasswordField);
+        swap(password2TextField, password2JPasswordField);
+        swap(password2TextField, password2JPasswordField);
 
+        Component[] components = {tagNameTextField, usernameTextField, password1JPasswordField,
+            password1TextField, password2JPasswordField, password2TextField};
+        
+        //Check input for emptyness
+        for (Component c : components){
+            if (c instanceof JPasswordField){
+                if (!(Encryption.notEmpty((JPasswordField)c))){
+                    verifyLabel.setText("One of the fields is empty");
+                    return;
+                }
+            } else {
+                if (!(Encryption.notEmpty((JTextField)c))){
+                    verifyLabel.setText("One of the fields is empty");
+                    return;
+                }
+            }
+        }
+        if (tagNameTextField.getText().length() > 50){
+            verifyLabel.setText("Max Username Length : 50");
+            return;
+        }
+        //Check that passwords match
+        if (!(Encryption.checkTextMacthes(password1JPasswordField, password2JPasswordField))){
+            verifyLabel.setText("Passwords Must Match");
+            return;
+        }
+
+        //Save
+        saveData(tagNameTextField, usernameTextField, password1JPasswordField);
+
+        clearFrame();
+        loadMainScreen();
     }
+    private void saveData(JTextField tagNameTextField, JTextField usernameTextField, JPasswordField password1JPasswordField){
+        /**
+         * saves password information into database
+         * 
+         * @param tagNameTextField : JTextField that contains tag name of password
+         * @param usernameTextField : JTextField that contains username of password
+         * @param password1JPasswordField : JPasswordField that contains password
+         */
+        Encryption encryptionClass = new Encryption(String.valueOf(password1JPasswordField.getPassword()));
+        try {
+            databaseConnection.addRow(tagNameTextField.getText(), usernameTextField.getText(), encryptionClass.getPassword(), encryptionClass.getKey());
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+
+
+
+    //GUI methods
     private void loadLoginScreen(){
         /**
          * adds GUI components to JFrame needed for login screen.
@@ -355,7 +434,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JPasswordField firstJPasswordField = createJPasswordField("firstJPasswordField",16, 10, 103, 150, 40);
 
-        JTextField firstPsTextField = createTextField("firstPsTextField", 22, 10, 103, 150, 40);
+        JTextField firstPsTextField = createTextField("firstPsTextField", 16, 10, 103, 150, 40);
 
         JButton viewButton = createButton("viewButton", "View", 16, 165, 103, 80 ,40);
         
@@ -442,7 +521,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @return none
          */
         try {
-            this.passwordPanels = new JPanel[databaseConnection.getRowCount()/* Change this to some number to see passowrd panels*/];
+            this.passwordPanels = new JPanel[databaseConnection.getRowCount() /* Change this to some number to see passowrd panels*/];
         } catch (SQLException e){
             System.out.println(e);
         }
@@ -469,10 +548,12 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             JPasswordField passwordPasswordField = new JPasswordField("No password found");
             try {
-                passwordPasswordField.setText(databaseConnection.getColumnData("password", i+1)+"   ");
-            } catch (SQLException e){
+                databaseConnection.getColumnData("password", i+1); // Verify existance of a password
+                passwordPasswordField.setText("**********");
+            } catch (SQLException e) {
                 System.out.println(e);
             }
+
             passwordPasswordField.setFont(new Font(FONT, Font.PLAIN, 22));
             passwordPasswordField.setEditable(false);
 
@@ -484,7 +565,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             copyButton.setFocusable(false);
             // copyButton.setFont((new Font(FONT,Font.BOLD, 18)));
             try {
-                Image copyImg = ImageIO.read(getClass().getResource("copy.png")); // edit as image icons become available
+                Image copyImg = ImageIO.read(getClass().getResource("copy.png")); // TODO: edit as image icons become available
                 copyButton.setIcon(new ImageIcon(copyImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -505,7 +586,16 @@ public class App extends JFrame implements ActionListener, KeyListener{
             viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
             viewButton.setBorder(empty);
             try {
-                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // edit as image icons become available
+                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // TODO: edit as image icons become available
+                viewButton.setIcon(new ImageIcon(viewImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            viewButton.setBorder(empty);
+            try {
+                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // TODO: edit as image icons become available
                 viewButton.setIcon(new ImageIcon(viewImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -527,7 +617,16 @@ public class App extends JFrame implements ActionListener, KeyListener{
             editButton.setPreferredSize(new Dimension(buttonW, buttonH));
             editButton.setBorder(empty);
             try {
-                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // edit as image icons become available
+                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // TODO: edit as image icons become available
+                editButton.setIcon(new ImageIcon(editImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            editButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            editButton.setBorder(empty);
+            try {
+                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // TODO: edit as image icons become available
                 editButton.setIcon(new ImageIcon(editImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -549,7 +648,16 @@ public class App extends JFrame implements ActionListener, KeyListener{
             removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
             removeButton.setBorder(empty);
             try {
-                Image delImg = ImageIO.read(getClass().getResource("del.png")); // edit as image icons become available
+                Image delImg = ImageIO.read(getClass().getResource("del.png")); // TODO: edit as image icons become available
+                removeButton.setIcon(new ImageIcon(delImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            removeButton.setBorder(empty);
+            try {
+                Image delImg = ImageIO.read(getClass().getResource("del.png")); // TODO: edit as image icons become available
                 removeButton.setIcon(new ImageIcon(delImg));
             } catch (Exception e) {
                 System.out.println(e);
@@ -647,6 +755,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JLabel tagnameLabel = createLabel("tagnamLabel", "Password Name", 16, 0, 17, 150, 30);
 
         JTextField tagnameTextField = createTextField("tagnameTextField", 16, 150, 17, 150, 30);
+        tagnameTextField.setDocument(new JLimitedTextField(12));
         tagnameTextField.setVisible(true);
 
         JPanel tagnameJPanel = new JPanel();
@@ -675,7 +784,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JPasswordField firstJPasswordField = createJPasswordField("firstJPasswordField", 16, 150, 17, 150, 30);
 
-        JTextField firstPsTextField = createTextField("firstPsTextField", 22, 150, 17, 150, 30);
+        JTextField firstPsTextField = createTextField("firstPsTextField", 16, 150, 17, 150, 30);
 
         JButton viewButton = createButton("viewButton", "View", 16, 305, 13, 80, 35);
         
@@ -694,7 +803,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JPasswordField secondJPasswordField = createJPasswordField("secondJPasswordField", 16, 150, 17, 150, 30);
 
-        JTextField secondTextField = createTextField("secondTextField", 22, 150, 17, 150, 30);
+        JTextField secondTextField = createTextField("secondTextField", 16, 150, 17, 150, 30);
 
         JButton viewButton1 = createButton("viewButton1", "View", 16, 305, 13, 80, 35);
 
@@ -710,7 +819,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JButton submitButton = createButton("submitButton", "Enter", 16, 170, 0, 100, 30);
 
-        verifyLabel = createLabel("verifyLabel", "", 16, 135, 50, 200, 20);
+        verifyLabel = createLabel("verifyLabel", "", 16, 125, 50, 300, 20);
 
         JPanel submitPanel = new JPanel();
         submitPanel.setLayout(null);
