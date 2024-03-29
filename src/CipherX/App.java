@@ -49,10 +49,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
         switch (c.getName()) {
             case "submitButton","firstJPasswordField","firstPsTextField":
             if (loginScreen){
-                TextField textfield = null;
+                JTextField textfield = null;
                 JPasswordField passwordField = null;
                 for (Component component : screenComponents){
-                    if (component.getName() == "firstPsTextField"){textfield = (TextField) component;}
+                    if (component.getName() == "firstPsTextField"){textfield = (JTextField) component;}
                     if (component.getName() == "firstJPasswordField"){passwordField = (JPasswordField) component;}
                 }
                 runstartup(textfield, passwordField);
@@ -63,10 +63,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             case "viewButton":
 
-                TextField textfield = null;
+            JTextField textfield = null;
                 JPasswordField passwordField = null;
                 for (Component component : screenComponents){
-                    if (component.getName() == "firstPsTextField"){textfield = (TextField) component;}
+                    if (component.getName() == "firstPsTextField"){textfield = (JTextField) component;}
                     if (component.getName() == "firstJPasswordField"){passwordField = (JPasswordField) component;}
                 }
                 swap(textfield, passwordField);
@@ -77,7 +77,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 textfield = null;
                 passwordField = null;
                 for (Component component : screenComponents){
-                    if (component.getName() == "secondTextField"){textfield = (TextField) component;}
+                    if (component.getName() == "secondTextField"){textfield = (JTextField) component;}
                     if (component.getName() == "secondJPasswordField"){passwordField  = (JPasswordField) component;}
                 }
                 swap(textfield, passwordField);
@@ -123,7 +123,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     public void keyTyped(KeyEvent e) {}
     public void keyPressed(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
-    private void runstartup(TextField firstPsTextField, JPasswordField firstJPasswordField){
+    private void runstartup(JTextField firstPsTextField, JPasswordField firstJPasswordField){
         /*
          * calls startup methods
          * 
@@ -196,21 +196,21 @@ public class App extends JFrame implements ActionListener, KeyListener{
             if (currentComponent instanceof JButton){
                 ((JButton) currentComponent).removeActionListener(this);
             }
-            if (currentComponent instanceof TextField || ((currentComponent instanceof JTextField) && (currentComponent instanceof JPasswordField))){
-                ((TextField) currentComponent).removeKeyListener(this);
+            if (currentComponent instanceof JTextField || ((currentComponent instanceof JTextField) && (currentComponent instanceof JPasswordField))){
+                ((JTextField) currentComponent).removeKeyListener(this);
             }
             screenComponents.remove(currentComponent);
             currentComponent = null;
         }
     }
-    private void swap(TextField textField, JPasswordField jPasswordField){
+    private void swap(JTextField textField, JPasswordField jPasswordField){
         /**
-         * swap JPassword Field with TextField for a user to view password.
+         * swap JPassword Field with JTextField for a user to view password.
          * whichever Field is visible will become invisible and the other will become visible.
          * this assumes that only one of the fields is visible
          * 
          * @param jPasswordFiled : JPasswordField to be swapped with textField
-         * @param textField : TextField to be swapped with jPasswordField
+         * @param JTextField : JTextField to be swapped with jPasswordField
          * @return none
          */
         if (textField.isVisible()){
@@ -270,22 +270,22 @@ public class App extends JFrame implements ActionListener, KeyListener{
         saveComponent(newLabel);
         return newLabel;
     }
-    private TextField createTextField(String name, int fontSize, int x, int y, int width, int height){
+    private JTextField createTextField(String name, int fontSize, int x, int y, int width, int height){
         /**
-         * Creates TextField with all reqiured methods
-         * TextFields are set invisable at first as they are 
+         * Creates JTextField with all reqiured methods
+         * JTextFields are set invisable at first as they are 
          * meant to be paried with JPasswordFields
          * 
-         * @param name : String name of the TextField
-         * @param fontSize : Int size of text in TextField
-         * @param x : Int if container of TextField has a null layout, this is the x starting postion
-         * @param y : Int if container of TextField has a null layout, this is the y starting postion
-         * @param width : Int if container of TextField has a null layout, this is the width
-         * @param height : Int if container of TextField has a null layout, this is the height
+         * @param name : String name of the JTextField
+         * @param fontSize : Int size of text in JTextField
+         * @param x : Int if container of JTextField has a null layout, this is the x starting postion
+         * @param y : Int if container of JTextField has a null layout, this is the y starting postion
+         * @param width : Int if container of JTextField has a null layout, this is the width
+         * @param height : Int if container of JTextField has a null layout, this is the height
          * 
          * @return newTextField : TextField that was created
          */
-        TextField newTextField = new TextField();
+        JTextField newTextField = new JTextField();
         newTextField.setFont(new Font(FONT,Font.BOLD, fontSize));
         newTextField.addKeyListener(this);
         newTextField.addActionListener(this);
@@ -355,7 +355,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JPasswordField firstJPasswordField = createJPasswordField("firstJPasswordField",16, 10, 103, 150, 40);
 
-        TextField firstPsTextField = createTextField("firstPsTextField", 22, 10, 103, 150, 40);
+        JTextField firstPsTextField = createTextField("firstPsTextField", 22, 10, 103, 150, 40);
 
         JButton viewButton = createButton("viewButton", "View", 16, 165, 103, 80 ,40);
         
@@ -646,7 +646,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JLabel tagnameLabel = createLabel("tagnamLabel", "Password Name", 16, 0, 17, 150, 30);
 
-        TextField tagnameTextField = createTextField("tagnameTextField", 16, 150, 17, 150, 30);
+        JTextField tagnameTextField = createTextField("tagnameTextField", 16, 150, 17, 150, 30);
         tagnameTextField.setVisible(true);
 
         JPanel tagnameJPanel = new JPanel();
@@ -660,7 +660,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JLabel usernameLabel = createLabel("usernameLabel", "Username", 16, 0, 17, 150, 30);
         usernameLabel.setHorizontalAlignment(JLabel.LEFT);
 
-        TextField usernameTextField = createTextField("usernameTextField", 16, 150, 17, 150, 30);
+        JTextField usernameTextField = createTextField("usernameTextField", 16, 150, 17, 150, 30);
         usernameTextField.setVisible(true);
 
         JPanel usernameJPanel = new JPanel();
@@ -675,7 +675,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JPasswordField firstJPasswordField = createJPasswordField("firstJPasswordField", 16, 150, 17, 150, 30);
 
-        TextField firstPsTextField = createTextField("firstPsTextField", 22, 150, 17, 150, 30);
+        JTextField firstPsTextField = createTextField("firstPsTextField", 22, 150, 17, 150, 30);
 
         JButton viewButton = createButton("viewButton", "View", 16, 305, 13, 80, 35);
         
@@ -694,7 +694,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JPasswordField secondJPasswordField = createJPasswordField("secondJPasswordField", 16, 150, 17, 150, 30);
 
-        TextField secondTextField = createTextField("secondTextField", 22, 150, 17, 150, 30);
+        JTextField secondTextField = createTextField("secondTextField", 22, 150, 17, 150, 30);
 
         JButton viewButton1 = createButton("viewButton1", "View", 16, 305, 13, 80, 35);
 
