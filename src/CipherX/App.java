@@ -515,8 +515,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
             viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
             viewButton.setBorder(empty);
-<<<<<<< Updated upstream
-=======
             try {
                 Image viewImg = ImageIO.read(getClass().getResource("view.png")); // TODO: edit as image icons become available
                 viewButton.setIcon(new ImageIcon(viewImg));
@@ -526,7 +524,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
             viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
             viewButton.setBorder(empty);
->>>>>>> Stashed changes
             viewButton.addActionListener(this);
 
             JButton editButton = new JButton(); // new JButton("Edit");
@@ -549,8 +546,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
             editButton.setPreferredSize(new Dimension(buttonW, buttonH));
             editButton.setBorder(empty);
-<<<<<<< Updated upstream
-=======
             try {
                 Image editImg = ImageIO.read(getClass().getResource("edit.png")); // TODO: edit as image icons become available
                 editButton.setIcon(new ImageIcon(editImg));
@@ -560,7 +555,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
             editButton.setPreferredSize(new Dimension(buttonW, buttonH));
             editButton.setBorder(empty);
->>>>>>> Stashed changes
             editButton.addActionListener(this);
 
             JButton removeButton = new JButton(); // new JButton("X");
@@ -583,8 +577,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
             removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
             removeButton.setBorder(empty);
-<<<<<<< Updated upstream
-=======
             try {
                 Image delImg = ImageIO.read(getClass().getResource("del.png")); // TODO: edit as image icons become available
                 removeButton.setIcon(new ImageIcon(delImg));
@@ -594,7 +586,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
             removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
             removeButton.setBorder(empty);
->>>>>>> Stashed changes
             removeButton.addActionListener(this);
 
             passwordPanel.add(Box.createRigidArea(new Dimension(0, 75)));
@@ -683,17 +674,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
         saveComponent(passwordJPanel);
 
         JLabel tagnameLabel = createLabel("tagnamLabel", "Password Name", 16, 0, 17, 150, 30);
-
-<<<<<<< Updated upstream
         tagnameTextField = new TextField();
         tagnameTextField.setFont(new Font(FONT,Font.BOLD, 16));
         tagnameTextField.addActionListener(this);
         tagnameTextField.setBounds(150,17,150,30);
-=======
         JTextField tagnameTextField = createTextField("tagnameTextField", 16, 150, 17, 150, 30);
         tagnameTextField.setDocument(new JLimitedTextField(12));
         tagnameTextField.setVisible(true);
->>>>>>> Stashed changes
 
         JPanel tagnameJPanel = new JPanel();
         tagnameJPanel.setLayout(null);
@@ -705,18 +692,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JLabel usernameLabel = createLabel("usernameLabel", "Username", 16, 0, 17, 150, 30);
         usernameLabel.setHorizontalAlignment(JLabel.LEFT);
-
-<<<<<<< Updated upstream
         usernameTextField = new TextField();
         usernameTextField.setFont(new Font(FONT,Font.BOLD, 16));
         usernameTextField.addActionListener(this);
         usernameTextField.setBounds(150,17,150,30);
-=======
         JTextField usernameTextField = createTextField("usernameTextField", 16, 150, 17, 150, 30);
         // usernameTextField.setDocument(new JLimitedTextField(20)); //Limits character count in text
         usernameTextField.setVisible(true);
->>>>>>> Stashed changes
-
         JPanel usernameJPanel = new JPanel();
         usernameJPanel.setLayout(null);
         usernameJPanel.setBackground(BGCOLOR);
