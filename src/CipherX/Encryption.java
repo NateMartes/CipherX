@@ -140,7 +140,6 @@ public class Encryption {
          * 
          * @returns boolean: true if JPasswordField is not empty; otherwise false
          */
-        System.out.println(!(String.valueOf(a.getPassword())).equals(""));
         return !(String.valueOf(a.getPassword())).equals("");
     }
     public static boolean checkPasswordRequirments(JPasswordField a){

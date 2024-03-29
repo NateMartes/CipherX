@@ -53,7 +53,7 @@ public class SQLConnection {
         stmt.executeUpdate(query);
         query = "USE cipherX";
         stmt.executeUpdate(query);
-        query = "CREATE TABLE passwords (tag_name VARCHAR(100), password VARCHAR(255), passKey VARCHAR(255))";
+        query = "CREATE TABLE passwords (tag_name VARCHAR(100), username VARCHAR(100) password VARCHAR(255), passKey VARCHAR(255))";
         stmt.executeUpdate(query);     
     }
     public boolean setRootPassword(String newPassword) throws SQLException{
@@ -109,7 +109,7 @@ public class SQLConnection {
         }
         return "";
     }
-    public boolean addRow(String tag_name, String password, String passKey) throws SQLException{
+    public boolean addRow(String tag_name, String username, String password, String passKey) throws SQLException{
         /**
          * adds row to password table in 'cipherX' database.
          * 
@@ -122,11 +122,12 @@ public class SQLConnection {
         try {
             String query = "USE cipherX";
             stmt.executeUpdate(query);
-            query = "INSERT INTO passwords(tag_name, password, passKey) VALUES (?, ?, ?)";
+            query = "INSERT INTO passwords(tag_name, password, passKey) VALUES (?, ?, ?, ?)";
             PreparedStatement stmtPrepared = connection.prepareStatement(query);
             stmtPrepared.setString(1, tag_name);
-            stmtPrepared.setString(2, password);
-            stmtPrepared.setString(3, passKey);
+            stmtPrepared.setString(2, tag_name);
+            stmtPrepared.setString(3, password);
+            stmtPrepared.setString(4, passKey);
             stmtPrepared.executeUpdate();
             return true;
         } catch (SQLException e){

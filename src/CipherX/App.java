@@ -2,6 +2,7 @@ package CipherX;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -20,6 +21,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private TextField firstPsTextField;
     private JPasswordField secondJPasswordField;
     private TextField secondTextField;
+    private TextField usernameTextField;
+    private TextField tagnameTextField;
     private JButton viewButton;
     private JButton viewButton1;
     private JButton createPassButton;
@@ -27,6 +30,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private JButton LogoutButton;
     private JButton submitButton;
     private JLabel verifyLabel;
+
+    private boolean loginScreen, mainScreen, createPassScreen;
+    private ArrayList<Boolean> allScreens = new ArrayList<Boolean>();
+    private ArrayList<Component> screenComponents = new ArrayList<Component>();
     private JPanel[] passwordPanels;
     private SQLConnection databaseConnection;
     App() {
@@ -43,23 +50,17 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.setTitle("CipherX");
         this.getContentPane().setBackground(BGCOLOR);
         this.setLocationRelativeTo(null);
-        loadRootPasswordScreen();
+        loadLoginScreen();
         this.setVisible(true);
     }
 
     //Event Methods
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == fristJPasswordField){
-            secondJPasswordField.requestFocus();
-        }
-        if (e.getSource() == submitButton){
+        if (e.getSource() == submitButton || e.getSource() == fristJPasswordField){
             if (firstPsTextField.isVisible()){
                 swap(firstPsTextField, fristJPasswordField);
             }
-            if (secondTextField.isVisible()) {
-                swap(secondTextField, secondJPasswordField);
-            }
-            if ((Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField)) && Encryption.notEmpty(fristJPasswordField) && Encryption.notEmpty(secondJPasswordField)){
+            if (Encryption.notEmpty(fristJPasswordField)){
                 try {
                     //Calls SQLConnection class to connect with local MySQL database
                     databaseConnection = new SQLConnection("root", String.valueOf(fristJPasswordField.getPassword()));
@@ -71,8 +72,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                         verifyLabel.setText(e1.toString());
                     }
                 }
-            } else if (!(Encryption.checkTextMacthes(secondJPasswordField, fristJPasswordField))){
-                verifyLabel.setText("Passwords Must Match");
             } else {
                 verifyLabel.setText("Empty Password Field");
             }
@@ -83,7 +82,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
             swap(secondTextField, secondJPasswordField);
         }
         if (e.getSource() == createPassButton) {
-            // create new password (Zack)
+            clearFrame();
+            loadCreatePassScreen();
         }
         if (e.getSource() == changeRootPassButton) {
             // change root password (Zack)
@@ -97,18 +97,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
             }
             // Change screen to login screen
             clearFrame();
-            loadRootPasswordScreen();
+            loadLoginScreen();
             this.revalidate();
             this.repaint();
         }
     }
     public void keyTyped(KeyEvent e) {}
-    public void keyPressed(KeyEvent e) {
-        
-    }
+    public void keyPressed(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
-
-    // Run Initialization functions
     private void runstartup(){
         /*
          * calls startup methods
@@ -119,8 +115,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         clearFrame();
         loadMainScreen();
     }
-    
-    // GUI Methods
+    //GUI Methods
     private void clearFrame(){
         /**
          * clears JFrame of all components
@@ -129,8 +124,54 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @return none
          */
         this.getContentPane().removeAll();
+        removeAllComponents();
         this.revalidate();
         this.repaint();
+    }
+    private void setCurrentVisibleScreen(boolean visibleScreen){
+        /**
+         * set visibleScreen to true and all other screens false as only
+         * one visible screen can be visible at a time
+         * 
+         * @param visibleScreen : boolean to be set true that correlates to current visible screen
+         * @return none
+         */
+        for (int i=0; i<allScreens.size(); i++){
+            if (allScreens.get(i) == visibleScreen){
+                visibleScreen = true;
+                continue;
+            }
+            Boolean screen = allScreens.get(i);
+            screen = false;
+        }
+    }
+    private void saveComponent(Component component){
+        /**
+         * Save component into screenComponents screenComponents
+         * 
+         * @param component : JComponent to be saved in screenComponents
+         * @return none
+         */
+        screenComponents.add(component);
+    }
+    private void removeAllComponents(){
+        /**
+         * removes all components and all refercenes to those compoenents from screenCompoenents
+         * 
+         * @param none
+         * @return none
+         */
+        while (screenComponents.size() > 0){
+            Component currentComponent = screenComponents.get(0);
+            if (currentComponent instanceof JButton){
+                ((JButton) currentComponent).removeActionListener(this);
+            }
+            if (currentComponent instanceof JTextField){
+                ((JTextField) currentComponent).removeKeyListener(this);
+            }
+            screenComponents.remove(currentComponent);
+            currentComponent = null;
+        }
     }
     private void swap(TextField textField, JPasswordField jPasswordField){
         /**
@@ -152,7 +193,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             jPasswordField.setVisible(false);
         }
     }
-    private void loadRootPasswordScreen(){
+    private void loadLoginScreen(){
         /**
          * adds GUI components to JFrame needed for root password screen.
          * 
@@ -169,19 +210,24 @@ public class App extends JFrame implements ActionListener, KeyListener{
         IntroLabel.setFont(new Font(FONT,Font.BOLD, 50));
         IntroPanel.add(IntroLabel);
         IntroPanel.setBackground(BGCOLOR);
+        saveComponent(IntroLabel);
+        saveComponent(IntroPanel);
         
-        JPanel passwordJPanel = new JPanel(new GridLayout(2,2, 20, 0));
+        JPanel passwordJPanel = new JPanel(new GridLayout(1,2, 20, 0));
         passwordJPanel.setBackground(BGCOLOR);
+        saveComponent(passwordJPanel);
 
         JLabel firstPasswordLabel = new JLabel("Enter Root Password");
         firstPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
         firstPasswordLabel.setHorizontalAlignment(JLabel.RIGHT);
+        saveComponent(passwordJPanel);
 
         fristJPasswordField = new JPasswordField();
         fristJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
         fristJPasswordField.addKeyListener(this);
         fristJPasswordField.addActionListener(this);
-        fristJPasswordField.setBounds(10,43,150,40);
+        fristJPasswordField.setBounds(10,103,150,40);
+        saveComponent(fristJPasswordField);
 
         firstPsTextField = new TextField();
         firstPsTextField.setFont(new Font(FONT,Font.BOLD,22));
@@ -189,13 +235,15 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPsTextField.addActionListener(this);
         firstPsTextField.setBounds(10,43,150,40);
         firstPsTextField.setVisible(false);
+        saveComponent(firstPsTextField);
 
         viewButton = new JButton();
         viewButton.setText("View");
         viewButton.setFocusable(false);
-        viewButton.setBounds(165, 43, 80, 40);
+        viewButton.setBounds(165, 103, 80, 40);
         viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
         viewButton.addActionListener(this);
+        saveComponent(viewButton);
         
         JPanel firstPasswordFieldPanel = new JPanel();
         firstPasswordFieldPanel.setLayout(null);
@@ -203,57 +251,28 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPasswordFieldPanel.add(fristJPasswordField);
         firstPasswordFieldPanel.add(firstPsTextField);
         firstPasswordFieldPanel.add(viewButton);
-
-        JLabel secondPasswordLabel = new JLabel("Re-enter Root Password");
-        secondPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
-        secondPasswordLabel.setHorizontalAlignment(JLabel.RIGHT);
-
-        secondJPasswordField = new JPasswordField();
-        secondJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
-        secondJPasswordField.addKeyListener(this);
-        secondJPasswordField.addActionListener(this);
-        secondJPasswordField.setBounds(10,43,150,40);
-
-        secondTextField = new TextField();
-        secondTextField.setFont(new Font(FONT,Font.BOLD, 22));
-        secondTextField.addKeyListener(this);
-        secondTextField.addActionListener(this);
-        secondTextField.setBounds(10,43,150,40);
-        secondTextField.setVisible(false);
-
-        viewButton1 = new JButton();
-        viewButton1.setText("View");
-        viewButton1.setFocusable(false);
-        viewButton1.setBounds(165, 43, 80, 40);
-        viewButton1.setFont((new Font(FONT,Font.BOLD, 16)));
-        viewButton1.addActionListener(this);
-
-        JPanel secondPasswordFieldPanel = new JPanel();
-        secondPasswordFieldPanel.setLayout(null);
-        secondPasswordFieldPanel.setBackground(BGCOLOR);
-        secondPasswordFieldPanel.add(secondJPasswordField);
-        secondPasswordFieldPanel.add(secondTextField);
-        secondPasswordFieldPanel.add(viewButton1);
+        saveComponent(firstPasswordFieldPanel);
 
         JPanel submitPanel = new JPanel();
         submitPanel.setBackground(BGCOLOR);
         submitPanel.setLayout(null);
+        saveComponent(submitPanel);
 
         verifyLabel = new JLabel();
         verifyLabel.setBounds(250,25,300,50);
         verifyLabel.setFont(new Font(FONT,Font.BOLD, 16));
         verifyLabel.setHorizontalAlignment(JLabel.CENTER);
+        saveComponent(verifyLabel);
 
         submitButton = new JButton("Enter");
         submitButton.setFocusable(false);
         submitButton.setFont(new Font(FONT,Font.BOLD, 16));
         submitButton.addActionListener(this);
         submitButton.setBounds(350,75,100,50);
+        saveComponent(submitButton);
 
         passwordJPanel.add(firstPasswordLabel);
         passwordJPanel.add(firstPasswordFieldPanel);
-        passwordJPanel.add(secondPasswordLabel);
-        passwordJPanel.add(secondPasswordFieldPanel);
 
         submitPanel.add(submitButton);
         submitPanel.add(verifyLabel);
@@ -261,6 +280,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.add(IntroPanel);
         this.add(passwordJPanel);
         this.add(submitPanel);
+
+        setCurrentVisibleScreen(loginScreen);
+
     }
     private void loadMainScreen(){
         /**
@@ -306,6 +328,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         
         this.add(new JScrollPane(passwordPanel), BorderLayout.CENTER);
         this.setVisible(true);
+
+        setCurrentVisibleScreen(mainScreen);
          
     }
     private void loadPasswords(JPanel ALLpasswordPanel){
@@ -424,6 +448,201 @@ public class App extends JFrame implements ActionListener, KeyListener{
             //Getting Components:
             //JLabel component = (JLabel) passwordPanels[0].getComponents()[1];
         }
+    }
+    private void loadCreatePassScreen(){
+        /**
+         * loads create password screen and all needed components
+         * 
+         * @param none
+         * @return none
+         */
+        
+        this.setLayout(new GridLayout(0,2,0,0));
+
+        JPanel IntroPanel = new JPanel();
+        JLabel IntroLabel = new JLabel("Create Password");
+        IntroPanel.setLayout(null);
+        IntroLabel.setBounds(20,5,300,60);
+        IntroLabel.setFont(new Font(FONT,Font.BOLD, 30));
+        IntroPanel.add(IntroLabel);
+        IntroPanel.setBackground(BGCOLOR);
+
+        JPanel BestPracticePanel = new JPanel();
+        JTextArea InfoTextArea = new JTextArea();
+        BestPracticePanel.setLayout(null);
+        InfoTextArea.setBounds(20,100,200,200);
+        InfoTextArea.setSize(400,300);
+        InfoTextArea.setText("""
+            Best Practices for a Secure Password:
+
+
+                * 12-16 Characters in Length
+
+                * A Mix of Uppercase, Numbers, 
+                  and Lowercase letters
+
+                * Multiple Symbols (!, @, etc.)
+
+                * Don't Reuse Passwords
+
+                * Avoid Personal Information
+                  (Birthday, Names, Usernames, etc.)
+
+                * Avoid Using Complete Words
+
+                """);
+        InfoTextArea.setBackground(BGCOLOR);
+        InfoTextArea.setFont(new Font(FONT,Font.BOLD, 16));
+        InfoTextArea.setEditable(false);
+
+        JButton generatePassButton = new JButton("Use Strong Password");
+        generatePassButton.addActionListener(this);
+        generatePassButton.setFont(new Font(FONT,Font.BOLD, 16));
+        generatePassButton.setFocusable(false);
+        generatePassButton.setBounds(70, 450, 250, 50);
+
+        IntroPanel.add(InfoTextArea);
+        IntroPanel.add(generatePassButton);
+    
+        JPanel passwordJPanel = new JPanel();
+        passwordJPanel.setLayout(new BoxLayout(passwordJPanel, BoxLayout.Y_AXIS));
+        passwordJPanel.setBorder(BorderFactory.createLineBorder(BGCOLOR, 0));
+        passwordJPanel.setBackground(BGCOLOR);
+
+        JLabel tagnameLabel = new JLabel("Password Name");
+        tagnameLabel.setFont(new Font(FONT, Font.BOLD, 16));
+        tagnameLabel.setBounds(0,17,150,30);
+        tagnameLabel.setHorizontalAlignment(JLabel.LEFT);
+
+        tagnameTextField = new TextField();
+        tagnameTextField.setFont(new Font(FONT,Font.BOLD, 16));
+        tagnameTextField.addActionListener(this);
+        tagnameTextField.setBounds(150,17,150,30);
+
+        JPanel tagnameJPanel = new JPanel();
+        tagnameJPanel.setLayout(null);
+        tagnameJPanel.setBackground(BGCOLOR);
+        tagnameJPanel.add(tagnameLabel);
+        tagnameJPanel.add(tagnameTextField);
+
+        JLabel usernameLabel = new JLabel("User/Email");
+        usernameLabel.setFont(new Font(FONT, Font.BOLD, 16));
+        usernameLabel.setBounds(0,17,150,30);
+        usernameLabel.setHorizontalAlignment(JLabel.LEFT);
+
+        usernameTextField = new TextField();
+        usernameTextField.setFont(new Font(FONT,Font.BOLD, 16));
+        usernameTextField.addActionListener(this);
+        usernameTextField.setBounds(150,17,150,30);
+
+        JPanel usernameJPanel = new JPanel();
+        usernameJPanel.setLayout(null);
+        usernameJPanel.setBackground(BGCOLOR);
+        usernameJPanel.add(usernameLabel);
+        usernameJPanel.add(usernameTextField);
+
+        JLabel firstPasswordLabel = new JLabel("Password");
+        firstPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
+        firstPasswordLabel.setBounds(0,17,150,30);
+        firstPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
+
+        fristJPasswordField = new JPasswordField();
+        fristJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
+        fristJPasswordField.addKeyListener(this);
+        fristJPasswordField.addActionListener(this);
+        fristJPasswordField.setBounds(150,17,150,30);
+
+        firstPsTextField = new TextField();
+        firstPsTextField.setFont(new Font(FONT,Font.BOLD,22));
+        firstPsTextField.addKeyListener(this);
+        firstPsTextField.addActionListener(this);
+        firstPsTextField.setBounds(150,17,150,30);
+        firstPsTextField.setVisible(false);
+
+        viewButton = new JButton();
+        viewButton.setText("View");
+        viewButton.setFocusable(false);
+        viewButton.setBounds(305, 13, 80, 35);
+        viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
+        viewButton.addActionListener(this);
+        
+        JPanel firstPasswordFieldPanel = new JPanel();
+        firstPasswordFieldPanel.setLayout(null);
+        firstPasswordFieldPanel.setBackground(BGCOLOR);
+        firstPasswordFieldPanel.add(firstPasswordLabel);
+        firstPasswordFieldPanel.add(fristJPasswordField);
+        firstPasswordFieldPanel.add(firstPsTextField);
+        firstPasswordFieldPanel.add(viewButton);
+
+        JLabel secondPasswordLabel = new JLabel("Verify Password");
+        secondPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
+        secondPasswordLabel.setBounds(0,17,150,30);
+        secondPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
+
+        secondJPasswordField = new JPasswordField();
+        secondJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
+        secondJPasswordField.addKeyListener(this);
+        secondJPasswordField.addActionListener(this);
+        secondJPasswordField.setBounds(150,17,150,30);
+
+        secondTextField = new TextField();
+        secondTextField.setFont(new Font(FONT,Font.BOLD, 22));
+        secondTextField.addKeyListener(this);
+        secondTextField.addActionListener(this);
+        secondTextField.setBounds(150,17,150,30);
+        secondTextField.setVisible(false);
+
+        viewButton1 = new JButton();
+        viewButton1.setText("View");
+        viewButton1.setFocusable(false);
+        viewButton1.setBounds(305, 13, 80, 35);
+        viewButton1.setFont((new Font(FONT,Font.BOLD, 16)));
+        viewButton1.addActionListener(this);
+
+        JPanel secondPasswordFieldPanel = new JPanel();
+        secondPasswordFieldPanel.setLayout(null);
+        secondPasswordFieldPanel.setBackground(BGCOLOR);
+        secondPasswordFieldPanel.add(secondPasswordLabel);
+        secondPasswordFieldPanel.add(secondJPasswordField);
+        secondPasswordFieldPanel.add(secondTextField);
+        secondPasswordFieldPanel.add(viewButton1);
+
+        submitButton = new JButton("Enter");
+        submitButton.setFocusable(false);
+        submitButton.setFont(new Font(FONT,Font.BOLD, 16));
+        submitButton.addActionListener(this);
+        submitButton.setBounds(170,0,100,30);
+
+        verifyLabel = new JLabel();
+        verifyLabel.setBounds(135,50,200,20);
+        verifyLabel.setFont(new Font(FONT,Font.BOLD, 16));
+
+        JPanel submitPanel = new JPanel();
+        submitPanel.setLayout(null);
+        submitPanel.setBackground(BGCOLOR);
+        submitPanel.add(submitButton);
+        submitPanel.add(verifyLabel);
+
+        JLabel spacer = new JLabel("");
+        spacer.setPreferredSize(new Dimension(100,106));
+
+        JLabel spacer2 = new JLabel("");
+        spacer2.setPreferredSize(new Dimension(100,250));
+
+        passwordJPanel.add(spacer);
+        passwordJPanel.add(tagnameJPanel);
+        passwordJPanel.add(usernameJPanel);
+        passwordJPanel.add(firstPasswordFieldPanel);
+        passwordJPanel.add(secondPasswordFieldPanel);
+        passwordJPanel.add(submitPanel);
+        passwordJPanel.add(spacer2);
+
+        this.add(IntroPanel);
+        this.add(passwordJPanel);
+        
+        this.setVisible(true);
+
+        setCurrentVisibleScreen(createPassScreen);
     }
 
 }
