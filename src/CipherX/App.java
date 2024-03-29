@@ -34,8 +34,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private boolean loginScreen, mainScreen, createPassScreen;
     private ArrayList<Boolean> allScreens = new ArrayList<Boolean>();
     private ArrayList<Component> screenComponents = new ArrayList<Component>();
+
+    private boolean loginScreen, mainScreen, createPassScreen;
+    private ArrayList<Boolean> allScreens = new ArrayList<Boolean>();
+    private ArrayList<Component> screenComponents = new ArrayList<Component>();
     private JPanel[] passwordPanels;
     private SQLConnection databaseConnection;
+
     App() {
         /**
          * Constructs app's JFrame and add necessities needed for JFrame
@@ -50,6 +55,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.setTitle("CipherX");
         this.getContentPane().setBackground(BGCOLOR);
         this.setLocationRelativeTo(null);
+
+        //Setup allScreens
+        allScreens.add(loginScreen);
+        allScreens.add(mainScreen);
+        allScreens.add(createPassScreen);
         loadLoginScreen();
         this.setVisible(true);
     }
@@ -90,6 +100,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         }
         if (e.getSource() == LogoutButton) {
             // log out of SQL database & return to login screen (Zack) -- Complete
+            // log out of SQL database & return to login screen (Zack) -- Complete
             try {
                 databaseConnection.exitDatabase(); // attempt to exit database
             } catch (SQLException e1) {
@@ -97,6 +108,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             }
             // Change screen to login screen
             clearFrame();
+            loadLoginScreen();
             loadLoginScreen();
             this.revalidate();
             this.repaint();
@@ -125,8 +137,54 @@ public class App extends JFrame implements ActionListener, KeyListener{
          */
         this.getContentPane().removeAll();
         removeAllComponents();
+        removeAllComponents();
         this.revalidate();
         this.repaint();
+    }
+    private void setCurrentVisibleScreen(boolean visibleScreen){
+        /**
+         * set visibleScreen to true and all other screens false as only
+         * one visible screen can be visible at a time
+         * 
+         * @param visibleScreen : boolean to be set true that correlates to current visible screen
+         * @return none
+         */
+        for (int i=0; i<allScreens.size(); i++){
+            if (allScreens.get(i) == visibleScreen){
+                visibleScreen = true;
+                continue;
+            }
+            Boolean screen = allScreens.get(i);
+            screen = false;
+        }
+    }
+    private void saveComponent(Component component){
+        /**
+         * Save component into screenComponents screenComponents
+         * 
+         * @param component : JComponent to be saved in screenComponents
+         * @return none
+         */
+        screenComponents.add(component);
+    }
+    private void removeAllComponents(){
+        /**
+         * removes all components and all refercenes to those compoenents from screenCompoenents
+         * 
+         * @param none
+         * @return none
+         */
+        while (screenComponents.size() > 0){
+            Component currentComponent = screenComponents.get(0);
+            if (currentComponent instanceof JButton){
+                ((JButton) currentComponent).removeActionListener(this);
+            }
+            if (currentComponent instanceof JTextField){
+                ((JTextField) currentComponent).removeKeyListener(this);
+            }
+            screenComponents.remove(currentComponent);
+            currentComponent = null;
+        }
     }
     private void setCurrentVisibleScreen(boolean visibleScreen){
         /**
@@ -194,8 +252,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
         }
     }
     private void loadLoginScreen(){
+    private void loadLoginScreen(){
         /**
-         * adds GUI components to JFrame needed for root password screen.
+         * adds GUI components to JFrame needed for login screen.
          * 
          * @param none
          * @return none
@@ -212,20 +271,27 @@ public class App extends JFrame implements ActionListener, KeyListener{
         IntroPanel.setBackground(BGCOLOR);
         saveComponent(IntroLabel);
         saveComponent(IntroPanel);
+        saveComponent(IntroLabel);
+        saveComponent(IntroPanel);
         
         JPanel passwordJPanel = new JPanel(new GridLayout(1,2, 20, 0));
+        JPanel passwordJPanel = new JPanel(new GridLayout(1,2, 20, 0));
         passwordJPanel.setBackground(BGCOLOR);
+        saveComponent(passwordJPanel);
         saveComponent(passwordJPanel);
 
         JLabel firstPasswordLabel = new JLabel("Enter Root Password");
         firstPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
         firstPasswordLabel.setHorizontalAlignment(JLabel.RIGHT);
         saveComponent(passwordJPanel);
+        saveComponent(passwordJPanel);
 
         fristJPasswordField = new JPasswordField();
         fristJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
         fristJPasswordField.addKeyListener(this);
         fristJPasswordField.addActionListener(this);
+        fristJPasswordField.setBounds(10,103,150,40);
+        saveComponent(fristJPasswordField);
         fristJPasswordField.setBounds(10,103,150,40);
         saveComponent(fristJPasswordField);
 
@@ -236,13 +302,16 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPsTextField.setBounds(10,43,150,40);
         firstPsTextField.setVisible(false);
         saveComponent(firstPsTextField);
+        saveComponent(firstPsTextField);
 
         viewButton = new JButton();
         viewButton.setText("View");
         viewButton.setFocusable(false);
         viewButton.setBounds(165, 103, 80, 40);
+        viewButton.setBounds(165, 103, 80, 40);
         viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
         viewButton.addActionListener(this);
+        saveComponent(viewButton);
         saveComponent(viewButton);
         
         JPanel firstPasswordFieldPanel = new JPanel();
@@ -252,10 +321,12 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPasswordFieldPanel.add(firstPsTextField);
         firstPasswordFieldPanel.add(viewButton);
         saveComponent(firstPasswordFieldPanel);
+        saveComponent(firstPasswordFieldPanel);
 
         JPanel submitPanel = new JPanel();
         submitPanel.setBackground(BGCOLOR);
         submitPanel.setLayout(null);
+        saveComponent(submitPanel);
         saveComponent(submitPanel);
 
         verifyLabel = new JLabel();
@@ -263,12 +334,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
         verifyLabel.setFont(new Font(FONT,Font.BOLD, 16));
         verifyLabel.setHorizontalAlignment(JLabel.CENTER);
         saveComponent(verifyLabel);
+        saveComponent(verifyLabel);
 
         submitButton = new JButton("Enter");
         submitButton.setFocusable(false);
         submitButton.setFont(new Font(FONT,Font.BOLD, 16));
         submitButton.addActionListener(this);
         submitButton.setBounds(350,75,100,50);
+        saveComponent(submitButton);
         saveComponent(submitButton);
 
         passwordJPanel.add(firstPasswordLabel);
@@ -330,6 +403,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.setVisible(true);
 
         setCurrentVisibleScreen(mainScreen);
+
+        setCurrentVisibleScreen(mainScreen);
          
     }
     private void loadPasswords(JPanel ALLpasswordPanel){
@@ -367,7 +442,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             JPasswordField passwordPasswordField = new JPasswordField("No password found");
             try {
-                passwordPasswordField.setText(databaseConnection.getColumnData("tag_name", i+1)+"   ");
+                passwordPasswordField.setText(databaseConnection.getColumnData("password", i+1)+"   ");
             } catch (SQLException e){
                 System.out.println(e);
             }
