@@ -43,6 +43,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         allScreens.add(loginScreen);
         allScreens.add(mainScreen);
         allScreens.add(createPassScreen);
+
         loadLoginScreen();
         this.setVisible(true);
     }
@@ -111,6 +112,12 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 this.revalidate();
                 this.repaint();
 
+                break;
+            case "goBackButton":
+
+                clearFrame();
+                loadMainScreen();
+                
                 break;
             default:
                 System.err.println("No Case Found for this Componenet");
@@ -496,7 +503,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JPanel IntroPanel = new JPanel();
         IntroPanel.setLayout(null);
         
-        JLabel IntroLabel = createLabel("IntroLabel", "Create Password", 30, 20, 5, 300, 60);
+        JLabel IntroLabel = createLabel("IntroLabel", "Create Password", 30, 20, 5, 400, 60);
 
         IntroPanel.add(IntroLabel);
         IntroPanel.setBackground(BGCOLOR);
@@ -624,18 +631,27 @@ public class App extends JFrame implements ActionListener, KeyListener{
         saveComponent(submitPanel);
 
         JLabel spacer = new JLabel("");
-        spacer.setPreferredSize(new Dimension(100,106));
+        spacer.setPreferredSize(new Dimension(100,20));
+
+        JButton goBackButton = createButton("goBackButton", "Cancel", 16, 100, 5, 0, 30);
+        goBackButton.setSize(new Dimension(100,50));
+        goBackButton.setAlignmentX(JButton.RIGHT);
 
         JLabel spacer2 = new JLabel("");
-        spacer2.setPreferredSize(new Dimension(100,250));
+        spacer2.setPreferredSize(new Dimension(200,50));
+
+        JLabel spacer3 = new JLabel("");
+        spacer3.setPreferredSize(new Dimension(100,200));
 
         passwordJPanel.add(spacer);
+        passwordJPanel.add(goBackButton);
+        passwordJPanel.add(spacer2);
         passwordJPanel.add(tagnameJPanel);
         passwordJPanel.add(usernameJPanel);
         passwordJPanel.add(firstPasswordFieldPanel);
         passwordJPanel.add(secondPasswordFieldPanel);
         passwordJPanel.add(submitPanel);
-        passwordJPanel.add(spacer2);
+        passwordJPanel.add(spacer3);
 
         this.add(IntroPanel);
         this.add(passwordJPanel);
