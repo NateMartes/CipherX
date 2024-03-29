@@ -53,7 +53,7 @@ public class SQLConnection {
         stmt.executeUpdate(query);
         query = "USE cipherX";
         stmt.executeUpdate(query);
-        query = "CREATE TABLE passwords (tag_name VARCHAR(100), username VARCHAR(100) password VARCHAR(255), passKey VARCHAR(255))";
+        query = "CREATE TABLE passwords (tag_name VARCHAR(100), username VARCHAR(100), password VARCHAR(255), passKey VARCHAR(255))";
         stmt.executeUpdate(query);     
     }
     public boolean setRootPassword(String newPassword) throws SQLException{

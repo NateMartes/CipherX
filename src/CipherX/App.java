@@ -17,19 +17,6 @@ import javax.swing.border.Border;
 public class App extends JFrame implements ActionListener, KeyListener{
     public static final Color BGCOLOR = new Color(0x757981);
     public static final String FONT = "Verdana";
-    private JPasswordField firstJPasswordField;
-    private TextField firstPsTextField;
-    private JPasswordField secondJPasswordField;
-    private TextField secondTextField;
-    private TextField usernameTextField;
-    private TextField tagnameTextField;
-    private JButton viewButton;
-    private JButton viewButton1;
-    private JButton createPassButton;
-    private JButton changeRootPassButton;
-    private JButton LogoutButton;
-    private JButton submitButton;
-
     private JLabel verifyLabel;
     private boolean loginScreen, mainScreen, createPassScreen;
     private ArrayList<Boolean> allScreens = new ArrayList<Boolean>();
@@ -66,7 +53,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         Component c = ((Component) e.getSource());
         System.out.println(c.getName());
         switch (c.getName()) {
-            case "submitButton","firstJPasswordField":
+            case "submitButton","firstJPasswordField","firstPsTextField":
 
                 TextField textfield = null;
                 JPasswordField passwordField = null;
@@ -124,6 +111,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 this.revalidate();
                 this.repaint();
 
+                break;
             default:
                 System.err.println("No Case Found for this Componenet");
                 break;
@@ -265,38 +253,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
         passwordJPanel.setName("IntroPanel");
         saveComponent(passwordJPanel);
 
-        JLabel firstPasswordLabel = new JLabel("Enter Root Password");
-        firstPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
+        JLabel firstPasswordLabel = createLabel("firstPasswordLabel","Enter Vault Password", 16, 0, 0,0, 0);
         firstPasswordLabel.setHorizontalAlignment(JLabel.RIGHT);
-        firstPasswordLabel.setName("firstPasswordLabel");
-        saveComponent(passwordJPanel);
 
-        firstJPasswordField = new JPasswordField();
-        firstJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
-        firstJPasswordField.addKeyListener(this);
-        firstJPasswordField.addActionListener(this);
-        firstJPasswordField.setBounds(10,103,150,40);
-        firstJPasswordField.setName("firstJPasswordField");
-        saveComponent(firstJPasswordField);
+        JPasswordField firstJPasswordField = createJPasswordField("firstJPasswordField",16, 10, 103, 150, 40);
 
-        firstPsTextField = new TextField();
-        firstPsTextField.setFont(new Font(FONT,Font.BOLD,22));
-        firstPsTextField.addKeyListener(this);
-        firstPsTextField.addActionListener(this);
-        firstPsTextField.setBounds(10,103,150,40);
-        firstPsTextField.setVisible(false);
-        firstPsTextField.setName("firstPsTextField");
-        saveComponent(firstPsTextField);
+        TextField firstPsTextField = createTextField("firstPsTextField", 22, 10, 103, 150, 40);
 
-        viewButton = new JButton();
-        viewButton.setText("View");
-        viewButton.setFocusable(false);
-        viewButton.setBounds(165, 103, 80, 40);
-        viewButton.setBounds(165, 103, 80, 40);
-        viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
-        viewButton.addActionListener(this);
-        viewButton.setName("viewButton");
-        saveComponent(viewButton);
+        JButton viewButton = createButton("viewButton", "View", 16, 165, 103, 80 ,40);
         
         JPanel firstPasswordFieldPanel = new JPanel();
         firstPasswordFieldPanel.setLayout(null);
@@ -313,20 +277,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
         submitPanel.setName("submitPanel");
         saveComponent(submitPanel);
 
-        verifyLabel = new JLabel();
-        verifyLabel.setBounds(250,25,300,50);
-        verifyLabel.setFont(new Font(FONT,Font.BOLD, 16));
+        JLabel verifyLabel = createLabel("verifyLabel","", 16, 250, 25,300, 50);
         verifyLabel.setHorizontalAlignment(JLabel.CENTER);
-        verifyLabel.setName("verifyLabel");
-        saveComponent(verifyLabel);
 
-        submitButton = new JButton("Enter");
-        submitButton.setFocusable(false);
-        submitButton.setFont(new Font(FONT,Font.BOLD, 16));
-        submitButton.addActionListener(this);
-        submitButton.setBounds(350,75,100,50);
-        submitButton.setName("submitButton");
-        saveComponent(submitButton);
+        JButton submitButton = createButton("submitButton", "Enter", 16, 350, 75, 100 ,50);
 
         passwordJPanel.add(firstPasswordLabel);
         passwordJPanel.add(firstPasswordFieldPanel);
@@ -355,28 +309,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
         buttonPanel.setLayout(null);
         buttonPanel.setPreferredSize(new Dimension(800,100));
         buttonPanel.setName("buttonPanel");
-        saveComponent(buttonPanel);
+        saveComponent(buttonPanel);  
 
-        createPassButton = new JButton("Create New Password");
-        createPassButton.setBounds(10,10,170,50);
-        createPassButton.setFocusable(false);
-        createPassButton.addActionListener(this);
-        createPassButton.setName("createPassButton");
-        saveComponent(createPassButton);
+        JButton createPassButton = createButton("createPassButton", "Create Password", -1, 10, 10, 170, 50);
 
-        changeRootPassButton = new JButton("Change Root Password");
-        changeRootPassButton.setBounds(430,10,170,50);
-        changeRootPassButton.setFocusable(false);
-        changeRootPassButton.addActionListener(this);
-        changeRootPassButton.setName("changeRootPassButton");
-        saveComponent(changeRootPassButton);
+        JButton changeRootPassButton = createButton("changeRootPassButton", "Change Vault Password", -1, 430, 10, 170, 50);
 
-        LogoutButton = new JButton("Logout");
-        LogoutButton.setBounds(610,10,160,50);
-        LogoutButton.setFocusable(false);
-        LogoutButton.addActionListener(this);
-        LogoutButton.setName("LogoutButton");
-        saveComponent(LogoutButton);
+        JButton LogoutButton = createButton("LogoutButton", "Logout", -1, 610, 10, 160, 50);
 
         buttonPanel.add(createPassButton);
         buttonPanel.add(changeRootPassButton);
@@ -389,14 +328,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
         passwordPanel.setBorder(BorderFactory.createLineBorder(BGCOLOR, 0));
         passwordPanel.setBackground(BGCOLOR);
         passwordPanel.setName("passwordPanel");
-        saveComponent(passwordPanel);
-
         loadPasswords(passwordPanel);
+        saveComponent(passwordPanel);
         
         this.add(new JScrollPane(passwordPanel), BorderLayout.CENTER);
         this.setVisible(true);
-
-        setCurrentVisibleScreen(mainScreen);
 
         setCurrentVisibleScreen(mainScreen);
          
@@ -558,16 +494,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.setLayout(new GridLayout(0,2,0,0));
 
         JPanel IntroPanel = new JPanel();
-        JLabel IntroLabel = new JLabel("Create Password");
         IntroPanel.setLayout(null);
-        IntroLabel.setBounds(20,5,300,60);
-        IntroLabel.setFont(new Font(FONT,Font.BOLD, 30));
+        
+        JLabel IntroLabel = createLabel("IntroLabel", "Create Password", 30, 20, 5, 300, 60);
+
         IntroPanel.add(IntroLabel);
         IntroPanel.setBackground(BGCOLOR);
         IntroPanel.setName("IntroPanel");
-        IntroLabel.setName("IntroLabel");
         saveComponent(IntroPanel);
-        saveComponent(IntroLabel);
 
         JPanel BestPracticePanel = new JPanel();
         JTextArea InfoTextArea = new JTextArea();
@@ -601,14 +535,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         InfoTextArea.setName("InfoTextArea");
         saveComponent(InfoTextArea);
 
-
-        JButton generatePassButton = new JButton("Use Strong Password");
-        generatePassButton.addActionListener(this);
-        generatePassButton.setFont(new Font(FONT,Font.BOLD, 16));
-        generatePassButton.setFocusable(false);
-        generatePassButton.setBounds(70, 450, 250, 50);
-        generatePassButton.setName("generatePassButton");
-        saveComponent(generatePassButton);
+        JButton generatePassButton = createButton("generatePassButton", "Use Strong Password", 16, 70, 450, 250, 50);
 
         IntroPanel.add(InfoTextArea);
         IntroPanel.add(generatePassButton);
@@ -620,19 +547,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
         passwordJPanel.setName("passwordJPanel");
         saveComponent(passwordJPanel);
 
-        JLabel tagnameLabel = new JLabel("Password Name");
-        tagnameLabel.setFont(new Font(FONT, Font.BOLD, 16));
-        tagnameLabel.setBounds(0,17,150,30);
-        tagnameLabel.setHorizontalAlignment(JLabel.LEFT);
-        tagnameLabel.setName("tagnameLabel");
-        saveComponent(tagnameLabel);
+        JLabel tagnameLabel = createLabel("tagnamLabel", "Password Name", 16, 0, 17, 150, 30);
 
-        tagnameTextField = new TextField();
-        tagnameTextField.setFont(new Font(FONT,Font.BOLD, 16));
-        tagnameTextField.addActionListener(this);
-        tagnameTextField.setBounds(150,17,150,30);
-        tagnameTextField.setName("tagnameTextField");
-        saveComponent(tagnameTextField);
+        TextField tagnameTextField = createTextField("tagnameTextField", 16, 150, 17, 150, 30);
+        tagnameTextField.setVisible(true);
 
         JPanel tagnameJPanel = new JPanel();
         tagnameJPanel.setLayout(null);
@@ -642,19 +560,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
         tagnameJPanel.setName("tagnameJPanel");
         saveComponent(tagnameJPanel);
 
-        JLabel usernameLabel = new JLabel("User/Email");
-        usernameLabel.setFont(new Font(FONT, Font.BOLD, 16));
-        usernameLabel.setBounds(0,17,150,30);
+        JLabel usernameLabel = createLabel("usernameLabel", "Username", 16, 0, 17, 150, 30);
         usernameLabel.setHorizontalAlignment(JLabel.LEFT);
-        usernameLabel.setName("usernameLabel");
-        saveComponent(usernameLabel);
 
-        usernameTextField = new TextField();
-        usernameTextField.setFont(new Font(FONT,Font.BOLD, 16));
-        usernameTextField.addActionListener(this);
-        usernameTextField.setBounds(150,17,150,30);
-        usernameTextField.setName("usernameTextField");
-        saveComponent(usernameTextField);
+        TextField usernameTextField = createTextField("usernameTextField", 16, 150, 17, 150, 30);
+        usernameTextField.setVisible(true);
 
         JPanel usernameJPanel = new JPanel();
         usernameJPanel.setLayout(null);
@@ -664,38 +574,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
         usernameJPanel.setName("usernameJPanel");
         saveComponent(usernameJPanel);
 
-        JLabel firstPasswordLabel = new JLabel("Password");
-        firstPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
-        firstPasswordLabel.setBounds(0,17,150,30);
-        firstPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
-        firstPasswordLabel.setName("firstPasswordLabel");
-        saveComponent(firstPasswordLabel);
+        JLabel firstPasswordLabel = createLabel("firstPasswordLabel", "Password", 16, 0, 17, 150, 30);
 
-        firstJPasswordField = new JPasswordField();
-        firstJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
-        firstJPasswordField.addKeyListener(this);
-        firstJPasswordField.addActionListener(this);
-        firstJPasswordField.setBounds(150,17,150,30);
-        firstJPasswordField.setName("firstJPasswordField");
-        saveComponent(firstJPasswordField);
+        JPasswordField firstJPasswordField = createJPasswordField("firstJPasswordField", 16, 150, 17, 150, 30);
 
-        firstPsTextField = new TextField();
-        firstPsTextField.setFont(new Font(FONT,Font.BOLD,22));
-        firstPsTextField.addKeyListener(this);
-        firstPsTextField.addActionListener(this);
-        firstPsTextField.setBounds(150,17,150,30);
-        firstPsTextField.setVisible(false);
-        firstPsTextField.setName("firstPsTextField");
-        saveComponent(firstPsTextField);
+        TextField firstPsTextField = createTextField("firstPsTextField", 22, 150, 17, 150, 30);
 
-        viewButton = new JButton();
-        viewButton.setText("View");
-        viewButton.setFocusable(false);
-        viewButton.setBounds(305, 13, 80, 35);
-        viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
-        viewButton.addActionListener(this);
-        viewButton.setName("viewButton");
-        saveComponent(viewButton);
+        JButton viewButton = createButton("viewButton", "View", 16, 305, 13, 80, 35);
         
         JPanel firstPasswordFieldPanel = new JPanel();
         firstPasswordFieldPanel.setLayout(null);
@@ -707,38 +592,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPasswordFieldPanel.setName("firstPasswordFieldPanel");
         saveComponent(firstPasswordFieldPanel);
 
-        JLabel secondPasswordLabel = new JLabel("Verify Password");
-        secondPasswordLabel.setFont(new Font(FONT,Font.BOLD, 16));
-        secondPasswordLabel.setBounds(0,17,150,30);
+        JLabel secondPasswordLabel = createLabel("secondPasswordLabel", "Verify Password", 16, 0, 17, 150, 30);
         secondPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
-        secondPasswordLabel.setName("secondPasswordLabel");
-        saveComponent(secondPasswordLabel);
 
-        secondJPasswordField = new JPasswordField();
-        secondJPasswordField.setFont(new Font(FONT,Font.BOLD, 16));
-        secondJPasswordField.addKeyListener(this);
-        secondJPasswordField.addActionListener(this);
-        secondJPasswordField.setBounds(150,17,150,30);
-        secondJPasswordField.setName("secondJPasswordField");
-        saveComponent(secondJPasswordField);
+        JPasswordField secondJPasswordField = createJPasswordField("secondJPasswordField", 16, 150, 17, 150, 30);
 
-        secondTextField = new TextField();
-        secondTextField.setFont(new Font(FONT,Font.BOLD, 22));
-        secondTextField.addKeyListener(this);
-        secondTextField.addActionListener(this);
-        secondTextField.setBounds(150,17,150,30);
-        secondTextField.setVisible(false);
-        secondTextField.setName("secondTextField");
-        saveComponent(secondTextField);
+        TextField secondTextField = createTextField("secondTextField", 22, 150, 17, 150, 30);
 
-        viewButton1 = new JButton();
-        viewButton1.setText("View");
-        viewButton1.setFocusable(false);
-        viewButton1.setBounds(305, 13, 80, 35);
-        viewButton1.setFont((new Font(FONT,Font.BOLD, 16)));
-        viewButton1.addActionListener(this);
-        viewButton1.setName("viewButton1");
-        saveComponent(viewButton1);
+        JButton viewButton1 = createButton("viewButton1", "View", 16, 305, 13, 80, 35);
 
         JPanel secondPasswordFieldPanel = new JPanel();
         secondPasswordFieldPanel.setLayout(null);
@@ -750,19 +611,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
         secondPasswordFieldPanel.setName("secondPasswordFieldPanel");
         saveComponent(secondPasswordFieldPanel);
 
-        submitButton = new JButton("Enter");
-        submitButton.setFocusable(false);
-        submitButton.setFont(new Font(FONT,Font.BOLD, 16));
-        submitButton.addActionListener(this);
-        submitButton.setBounds(170,0,100,30);
-        submitButton.setName("submitButton");
-        saveComponent(submitButton);
+        JButton submitButton = createButton("submitButton", "Enter", 16, 170, 0, 100, 30);
 
-        verifyLabel = new JLabel();
-        verifyLabel.setBounds(135,50,200,20);
-        verifyLabel.setFont(new Font(FONT,Font.BOLD, 16));
-        verifyLabel.setName("verifyLabel");
-        saveComponent(verifyLabel);
+        JLabel verifyLabel = createLabel("verifyLabel", "", 16, 135, 50, 200, 20);
 
         JPanel submitPanel = new JPanel();
         submitPanel.setLayout(null);
@@ -792,6 +643,103 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.setVisible(true);
 
         setCurrentVisibleScreen(createPassScreen);
+    }
+    private JButton createButton(String name, String text, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates JButton with all reqiured methods
+         * 
+         * @param name : String name of the button
+         * @param text : String text in the Button
+         * @param fontSize : int font size of text in button. If fontsize is -1, use normal fontsize
+         * @param x : Int if container of button has a null layout, this is the x starting postion
+         * @param y : Int if container of button has a null layout, this is the y starting postion
+         * @param width : Int if container of button has a null layout, this is the width
+         * @param height : Int if container of button has a null layout, this is the height
+         * 
+         * @return newButton : JButton that was created
+         */
+        JButton newButton = new JButton(text);
+        newButton.addActionListener(this);
+        newButton.setFocusable(false);
+        if (fontSize != -1){
+            newButton.setFont(new Font(FONT, Font.BOLD, fontSize));
+        }
+        newButton.setBounds(x,y,width,height);
+        newButton.setName(name);
+        saveComponent(newButton);
+        return newButton;
+    }
+    private JLabel createLabel(String name, String text, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates JLabel with all reqiured methods
+         * 
+         * @param name : String name of the Label
+         * @param text : String text in the Label
+         * @param fontSize : Int size of text in Label
+         * @param x : Int if container of Label has a null layout, this is the x starting postion
+         * @param y : Int if container of Label has a null layout, this is the y starting postion
+         * @param width : Int if container of Label has a null layout, this is the width
+         * @param height : Int if container of Label has a null layout, this is the height
+         * 
+         * @return newButton : JLabel that was created
+         */
+        JLabel newLabel = new JLabel(text);
+        newLabel.setFocusable(false);
+        newLabel.setFont(new Font(FONT, Font.BOLD, fontSize));
+        newLabel.setBounds(x,y,width,height);
+        newLabel.setName(name);
+        saveComponent(newLabel);
+        return newLabel;
+    }
+    private TextField createTextField(String name, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates TextField with all reqiured methods
+         * TextFields are set invisable at first as they are 
+         * meant to be paried with JPasswordFields
+         * 
+         * @param name : String name of the TextField
+         * @param fontSize : Int size of text in TextField
+         * @param x : Int if container of TextField has a null layout, this is the x starting postion
+         * @param y : Int if container of TextField has a null layout, this is the y starting postion
+         * @param width : Int if container of TextField has a null layout, this is the width
+         * @param height : Int if container of TextField has a null layout, this is the height
+         * 
+         * @return newTextField : TextField that was created
+         */
+        TextField newTextField = new TextField();
+        newTextField.setFont(new Font(FONT,Font.BOLD, fontSize));
+        newTextField.addKeyListener(this);
+        newTextField.addActionListener(this);
+        newTextField.setBounds(x,y,width,height);
+        newTextField.setVisible(false);
+        newTextField.setName(name);
+        saveComponent(newTextField);
+        return newTextField;
+    }
+    private JPasswordField createJPasswordField(String name, int fontSize, int x, int y, int width, int height){
+        /**
+         * Creates JPasswordField with all reqiured methods
+         * JPasswordFields are set visable at first as they are 
+         * meant to be paried with JPasswordFields
+         * 
+         * @param name : String name of the JPasswordField
+         * @param fontSize : Int size of text in JPasswordField
+         * @param x : Int if container of JPasswordField has a null layout, this is the x starting postion
+         * @param y : Int if container of JPasswordField has a null layout, this is the y starting postion
+         * @param width : Int if container of JPasswordField has a null layout, this is the width
+         * @param height : Int if container of JPasswordField has a null layout, this is the height
+         * 
+         * @return newJPasswordField : JPasswordField that was created
+         */
+        JPasswordField newJPasswordField = new JPasswordField();
+        newJPasswordField.setFont(new Font(FONT,Font.BOLD, fontSize));
+        newJPasswordField.addKeyListener(this);
+        newJPasswordField.addActionListener(this);
+        newJPasswordField.setBounds(x,y,width,height);
+        newJPasswordField.setVisible(true);
+        newJPasswordField.setName(name);
+        saveComponent(newJPasswordField);
+        return newJPasswordField;
     }
 
 }
