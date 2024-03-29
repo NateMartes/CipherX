@@ -19,7 +19,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
     public static final String FONT = "Verdana";
     private JLabel verifyLabel;
     private Boolean loginScreen = false , mainScreen = false, createPassScreen = false;
-    private ArrayList<Boolean> allScreens = new ArrayList<Boolean>();
     private ArrayList<Component> screenComponents = new ArrayList<Component>();
     private JPanel[] passwordPanels;
     private SQLConnection databaseConnection;
@@ -38,12 +37,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.setTitle("CipherX");
         this.getContentPane().setBackground(BGCOLOR);
         this.setLocationRelativeTo(null);
-
-        //Setup all screens
-        allScreens.add(loginScreen);
-        allScreens.add(createPassScreen);
-        allScreens.add(mainScreen);
-
         loadLoginScreen();
         this.setVisible(true);
     }
@@ -173,10 +166,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
     }
     private void resetVisibleScreen(){
         /**
-         * set visibleScreen to true and all other screens false as only
-         * one visible screen can be visible at a time
+         * resets all screens
          * 
-         * @param visibleScreen : boolean to be set true that correlates to current visible screen
+         * @param none 
          * @return none
          */
         loginScreen = false;
@@ -204,11 +196,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
             if (currentComponent instanceof JButton){
                 ((JButton) currentComponent).removeActionListener(this);
             }
-            if (currentComponent instanceof TextField){
+            if (currentComponent instanceof TextField || ((currentComponent instanceof JTextField) && (currentComponent instanceof JPasswordField))){
                 ((TextField) currentComponent).removeKeyListener(this);
-            }
-            if ((currentComponent instanceof TextField) && (currentComponent instanceof JPasswordField)){
-                System.out.println("hey");
             }
             screenComponents.remove(currentComponent);
             currentComponent = null;
