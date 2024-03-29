@@ -114,6 +114,7 @@ public class SQLConnection {
          * adds row to password table in 'cipherX' database.
          * 
          * @param tag_name : String tag_name tied to password to be saved
+         * @param username : String username to be saved
          * @param password : String password to be saved
          * @param password : String key of password to be saved
          * 
@@ -122,10 +123,10 @@ public class SQLConnection {
         try {
             String query = "USE cipherX";
             stmt.executeUpdate(query);
-            query = "INSERT INTO passwords(tag_name, password, passKey) VALUES (?, ?, ?, ?)";
+            query = "INSERT INTO passwords(tag_name, username, password, passKey) VALUES (?, ?, ?, ?)";
             PreparedStatement stmtPrepared = connection.prepareStatement(query);
             stmtPrepared.setString(1, tag_name);
-            stmtPrepared.setString(2, tag_name);
+            stmtPrepared.setString(2, username);
             stmtPrepared.setString(3, password);
             stmtPrepared.setString(4, passKey);
             stmtPrepared.executeUpdate();

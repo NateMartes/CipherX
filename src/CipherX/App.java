@@ -117,7 +117,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
                 clearFrame();
                 loadMainScreen();
-                
+
                 break;
             default:
                 System.err.println("No Case Found for this Componenet");
