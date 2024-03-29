@@ -2,7 +2,10 @@ package CipherX;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 /**
  * 
@@ -43,6 +46,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         loadRootPasswordScreen();
         this.setVisible(true);
     }
+
     //Event Methods
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == fristJPasswordField){
@@ -99,8 +103,12 @@ public class App extends JFrame implements ActionListener, KeyListener{
         }
     }
     public void keyTyped(KeyEvent e) {}
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+        
+    }
     public void keyReleased(KeyEvent e) {}
+
+    // Run Initialization functions
     private void runstartup(){
         /*
          * calls startup methods
@@ -111,7 +119,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         clearFrame();
         loadMainScreen();
     }
-    //GUI Methods
+    
+    // GUI Methods
     private void clearFrame(){
         /**
          * clears JFrame of all components
@@ -324,6 +333,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
             }
             passwordTagLabel.setFont(new Font(FONT, Font.PLAIN, 22));
 
+            JLabel usernameLabel = new JLabel("No username found");
+            try {
+                usernameLabel.setText(databaseConnection.getColumnData("username", i+1));
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            usernameLabel.setFont(new Font(FONT, Font.PLAIN, 22));
+
             JPasswordField passwordPasswordField = new JPasswordField("No password found");
             try {
                 passwordPasswordField.setText(databaseConnection.getColumnData("tag_name", i+1)+"   ");
@@ -333,25 +350,68 @@ public class App extends JFrame implements ActionListener, KeyListener{
             passwordPasswordField.setFont(new Font(FONT, Font.PLAIN, 22));
             passwordPasswordField.setEditable(false);
 
-            JButton viewButton = new JButton("View");
+            int buttonW = 45;
+            int buttonH = 45;
+            Border empty = BorderFactory.createEmptyBorder();
+
+            JButton copyButton = new JButton();
+            copyButton.setFocusable(false);
+            // copyButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            try {
+                Image copyImg = ImageIO.read(getClass().getResource("copy.png")); // edit as image icons become available
+                copyButton.setIcon(new ImageIcon(copyImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            copyButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            copyButton.setBorder(empty);
+            copyButton.addActionListener(this);
+            
+            JButton viewButton = new JButton(); // new JButton("View");
             viewButton.setFocusable(false);
-            viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            try {
+                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // edit as image icons become available
+                viewButton.setIcon(new ImageIcon(viewImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            viewButton.setBorder(empty);
             viewButton.addActionListener(this);
 
-            JButton editButton = new JButton("Edit");
+            JButton editButton = new JButton(); // new JButton("Edit");
             editButton.setFocusable(false);
-            editButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            try {
+                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // edit as image icons become available
+                editButton.setIcon(new ImageIcon(editImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            editButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            editButton.setBorder(empty);
             editButton.addActionListener(this);
 
-            JButton removeButton = new JButton("X");
+            JButton removeButton = new JButton(); // new JButton("X");
             removeButton.setFocusable(false);
-            removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            try {
+                Image delImg = ImageIO.read(getClass().getResource("del.png")); // edit as image icons become available
+                removeButton.setIcon(new ImageIcon(delImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            removeButton.setBorder(empty);
             removeButton.addActionListener(this);
 
             passwordPanel.add(Box.createRigidArea(new Dimension(0, 75)));
 
             passwordPanel.add(passwordTagLabel);
+            passwordPanel.add(usernameLabel);
             passwordPanel.add(passwordPasswordField);
+            passwordPanel.add(copyButton);
             passwordPanel.add(viewButton);
             passwordPanel.add(editButton);
             passwordPanel.add(removeButton);
@@ -365,4 +425,5 @@ public class App extends JFrame implements ActionListener, KeyListener{
             //JLabel component = (JLabel) passwordPanels[0].getComponents()[1];
         }
     }
+
 }
