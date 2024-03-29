@@ -1,8 +1,7 @@
 package CipherX;
-import java.sql.*;
 
 public class Main {
-    public static void main(String[] args) throws SQLException{
-        new App();    
+    public static void main(String[] args) {
+        new App();
     }
 }

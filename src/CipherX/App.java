@@ -1,14 +1,12 @@
 package CipherX;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.CookieManager;
 import java.sql.*;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
-
 
 /**
  * 
@@ -61,6 +59,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         loadLoginScreen();
         this.setVisible(true);
     }
+
     //Event Methods
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -169,6 +168,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @return none
          */
         this.getContentPane().removeAll();
+        removeAllComponents();
         removeAllComponents();
         this.revalidate();
         this.repaint();
@@ -292,6 +292,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         viewButton.setText("View");
         viewButton.setFocusable(false);
         viewButton.setBounds(165, 103, 80, 40);
+        viewButton.setBounds(165, 103, 80, 40);
         viewButton.setFont((new Font(FONT,Font.BOLD, 16)));
         viewButton.addActionListener(this);
         viewButton.setName("viewButton");
@@ -338,6 +339,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.add(submitPanel);
 
         setCurrentVisibleScreen(loginScreen);
+
     }
     private void loadMainScreen(){
         /**
@@ -393,6 +395,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         
         this.add(new JScrollPane(passwordPanel), BorderLayout.CENTER);
         this.setVisible(true);
+
+        setCurrentVisibleScreen(mainScreen);
 
         setCurrentVisibleScreen(mainScreen);
          
@@ -467,10 +471,28 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
             viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
             viewButton.setBorder(empty);
+            try {
+                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // edit as image icons become available
+                viewButton.setIcon(new ImageIcon(viewImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            viewButton.setBorder(empty);
             viewButton.addActionListener(this);
 
             JButton editButton = new JButton(); // new JButton("Edit");
             editButton.setFocusable(false);
+            try {
+                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // edit as image icons become available
+                editButton.setIcon(new ImageIcon(editImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            editButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            editButton.setBorder(empty);
             try {
                 Image editImg = ImageIO.read(getClass().getResource("edit.png")); // edit as image icons become available
                 editButton.setIcon(new ImageIcon(editImg));
@@ -493,13 +515,24 @@ public class App extends JFrame implements ActionListener, KeyListener{
             // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
             removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
             removeButton.setBorder(empty);
+            try {
+                Image delImg = ImageIO.read(getClass().getResource("del.png")); // edit as image icons become available
+                removeButton.setIcon(new ImageIcon(delImg));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            removeButton.setBorder(empty);
             removeButton.addActionListener(this);
 
             passwordPanel.add(Box.createRigidArea(new Dimension(0, 75)));
 
             passwordPanel.add(passwordTagLabel);
             passwordPanel.add(usernameLabel);
+            passwordPanel.add(usernameLabel);
             passwordPanel.add(passwordPasswordField);
+            passwordPanel.add(copyButton);
             passwordPanel.add(copyButton);
             passwordPanel.add(viewButton);
             passwordPanel.add(editButton);
@@ -760,4 +793,5 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         setCurrentVisibleScreen(createPassScreen);
     }
+
 }
