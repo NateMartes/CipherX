@@ -51,8 +51,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 JTextField textfield = null;
                 JPasswordField passwordField = null;
                 for (Component component : screenComponents){
-                    if (component.getName() == "firstPsTextField"){textfield = (JTextField) component;}
-                    if (component.getName() == "firstJPasswordField"){passwordField = (JPasswordField) component;}
+                    if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
+                    if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
                 }
                 runstartup(textfield, passwordField);
             } else if (createPassScreen){
@@ -65,8 +65,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
             JTextField textfield = null;
                 JPasswordField passwordField = null;
                 for (Component component : screenComponents){
-                    if (component.getName() == "firstPsTextField"){textfield = (JTextField) component;}
-                    if (component.getName() == "firstJPasswordField"){passwordField = (JPasswordField) component;}
+                    if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
+                    if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
                 }
                 swap(textfield, passwordField);
                 break;
@@ -76,8 +76,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 textfield = null;
                 passwordField = null;
                 for (Component component : screenComponents){
-                    if (component.getName() == "secondTextField"){textfield = (JTextField) component;}
-                    if (component.getName() == "secondJPasswordField"){passwordField  = (JPasswordField) component;}
+                    if (component.getName() == "secondTextField") textfield = (JTextField) component;
+                    if (component.getName() == "secondJPasswordField") passwordField  = (JPasswordField) component;
                 }
                 swap(textfield, passwordField);
                 break;
@@ -336,12 +336,12 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JTextField password2TextField = null;
         
         for (Component component : screenComponents ){
-            if (component.getName() == "tagnameTextField"){tagNameTextField = (JTextField) component;}
-            if (component.getName() == "usernameTextField"){usernameTextField = (JTextField) component;}
-            if (component.getName() == "firstJPasswordField"){password1JPasswordField = (JPasswordField) component;}
-            if (component.getName() == "firstPsTextField"){password1TextField = (JTextField) component;}
-            if (component.getName() == "secondJPasswordField"){password2JPasswordField = (JPasswordField) component;}
-            if (component.getName() == "secondTextField"){password2TextField = (JTextField) component;}   
+            if (component.getName() == "tagnameTextField") tagNameTextField = (JTextField) component;
+            if (component.getName() == "usernameTextField") usernameTextField = (JTextField) component;
+            if (component.getName() == "firstJPasswordField") password1JPasswordField = (JPasswordField) component;
+            if (component.getName() == "firstPsTextField") password1TextField = (JTextField) component;
+            if (component.getName() == "secondJPasswordField") password2JPasswordField = (JPasswordField) component;
+            if (component.getName() == "secondTextField") password2TextField = (JTextField) component;
         }
         //swap and reswap fields to ensure both fields have the same string
         swap(password1TextField, password1JPasswordField);
@@ -549,7 +549,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             JPasswordField passwordPasswordField = new JPasswordField("No password found");
             try {
                 databaseConnection.getColumnData("password", i+1); // Verify existance of a password
-                passwordPasswordField.setText("**********");
+                passwordPasswordField.setText("*****");
             } catch (SQLException e) {
                 System.out.println(e);
             }
@@ -561,39 +561,20 @@ public class App extends JFrame implements ActionListener, KeyListener{
             int buttonH = 45;
             Border empty = BorderFactory.createEmptyBorder();
 
-            JButton copyButton = new JButton();
-            copyButton.setFocusable(false);
-            // copyButton.setFont((new Font(FONT,Font.BOLD, 18)));
+            JButton copyPassButton = new JButton();
+            copyPassButton.setFocusable(false);
             try {
                 Image copyImg = ImageIO.read(getClass().getResource("copy.png")); // TODO: edit as image icons become available
-                copyButton.setIcon(new ImageIcon(copyImg));
+                copyPassButton.setIcon(new ImageIcon(copyImg));
             } catch (Exception e) {
                 System.out.println(e);
             }
-            copyButton.setPreferredSize(new Dimension(buttonW, buttonH));
-            copyButton.setBorder(empty);
-            copyButton.addActionListener(this);
+            copyPassButton.setPreferredSize(new Dimension(buttonW, buttonH));
+            copyPassButton.setBorder(empty);
+            copyPassButton.addActionListener(this);
             
             JButton viewButton = new JButton(); // new JButton("View");
             viewButton.setFocusable(false);
-            try {
-                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // edit as image icons become available
-                viewButton.setIcon(new ImageIcon(viewImg));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
-            viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
-            viewButton.setBorder(empty);
-            try {
-                Image viewImg = ImageIO.read(getClass().getResource("view.png")); // TODO: edit as image icons become available
-                viewButton.setIcon(new ImageIcon(viewImg));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            // viewButton.setFont((new Font(FONT,Font.BOLD, 18)));
-            viewButton.setPreferredSize(new Dimension(buttonW, buttonH));
-            viewButton.setBorder(empty);
             try {
                 Image viewImg = ImageIO.read(getClass().getResource("view.png")); // TODO: edit as image icons become available
                 viewButton.setIcon(new ImageIcon(viewImg));
@@ -608,24 +589,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             JButton editButton = new JButton(); // new JButton("Edit");
             editButton.setFocusable(false);
             try {
-                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // edit as image icons become available
-                editButton.setIcon(new ImageIcon(editImg));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
-            editButton.setPreferredSize(new Dimension(buttonW, buttonH));
-            editButton.setBorder(empty);
-            try {
-                Image editImg = ImageIO.read(getClass().getResource("edit.png")); // TODO: edit as image icons become available
-                editButton.setIcon(new ImageIcon(editImg));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            // editButton.setFont((new Font(FONT,Font.BOLD, 18)));
-            editButton.setPreferredSize(new Dimension(buttonW, buttonH));
-            editButton.setBorder(empty);
-            try {
                 Image editImg = ImageIO.read(getClass().getResource("edit.png")); // TODO: edit as image icons become available
                 editButton.setIcon(new ImageIcon(editImg));
             } catch (Exception e) {
@@ -638,24 +601,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             JButton removeButton = new JButton(); // new JButton("X");
             removeButton.setFocusable(false);
-            try {
-                Image delImg = ImageIO.read(getClass().getResource("del.png")); // edit as image icons become available
-                removeButton.setIcon(new ImageIcon(delImg));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
-            removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
-            removeButton.setBorder(empty);
-            try {
-                Image delImg = ImageIO.read(getClass().getResource("del.png")); // TODO: edit as image icons become available
-                removeButton.setIcon(new ImageIcon(delImg));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            // removeButton.setFont((new Font(FONT,Font.BOLD, 18)));
-            removeButton.setPreferredSize(new Dimension(buttonW, buttonH));
-            removeButton.setBorder(empty);
             try {
                 Image delImg = ImageIO.read(getClass().getResource("del.png")); // TODO: edit as image icons become available
                 removeButton.setIcon(new ImageIcon(delImg));
@@ -671,10 +616,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             passwordPanel.add(passwordTagLabel);
             passwordPanel.add(usernameLabel);
-            passwordPanel.add(usernameLabel);
             passwordPanel.add(passwordPasswordField);
-            passwordPanel.add(copyButton);
-            passwordPanel.add(copyButton);
+            passwordPanel.add(copyPassButton);
             passwordPanel.add(viewButton);
             passwordPanel.add(editButton);
             passwordPanel.add(removeButton);
