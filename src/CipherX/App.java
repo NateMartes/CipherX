@@ -56,13 +56,20 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 }
                 runstartup(textfield, passwordField);
             } else if (createPassScreen){
-                validateInputOnCreatePassScreen(); 
+                JTextField textfield2 = null;
+                JPasswordField passwordField2 = null;
+                for (Component component : screenComponents){
+                    if (component.getName() == "secondTextField") textfield2 = (JTextField) component;
+                    if (component.getName() == "secondJPasswordField") passwordField2 = (JPasswordField) component;
+                }
+                if (c.getName() == "submitButton") validateInputOnCreatePassScreen();
+                if (c.getName() == "firstJPasswordField"|| c.getName() == "firstJPsTextField") getVisibleComponent(textfield2, passwordField2).requestFocus();
             }
             break;
 
             case "viewButton":
 
-            JTextField textfield = null;
+                JTextField textfield = null;
                 JPasswordField passwordField = null;
                 for (Component component : screenComponents){
                     if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
@@ -112,6 +119,28 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
                 clearFrame();
                 loadMainScreen();
+                break;
+
+            case "secondTextField","secondJPasswordField":
+
+                validateInputOnCreatePassScreen();
+                break;
+            case "tagnameTextField":
+
+                for (Component component : screenComponents){
+                    if (component.getName() == "usernameTextField") component.requestFocus();
+                }
+                break;
+
+            case "usernameTextField":
+
+                textfield = null;
+                passwordField = null;
+                for (Component component : screenComponents){
+                    if (component.getName() == "firstPsTextField") textfield = (JTextField)component;
+                    if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField)component;
+                }
+                getVisibleComponent(textfield, passwordField).requestFocus();
                 break;
 
             default:
@@ -173,6 +202,22 @@ public class App extends JFrame implements ActionListener, KeyListener{
         loginScreen = false;
         mainScreen = false;
         createPassScreen = false;
+    }
+    private Component getVisibleComponent(Component a, Component b){
+        /**
+         * checks which componenet is visible
+         * 
+         * @param a : Componenet that may be visible;
+         * @param b : Componenet that may be visible;
+         * @return : the visible component unless both are invisible
+         */
+        if (a.isVisible()){
+            return a;
+        } else if (b.isVisible()) {
+            return b;
+        } else {
+            return null;
+        }
     }
     private void saveComponent(Component component){
         /**
@@ -489,7 +534,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JButton createPassButton = createButton("createPassButton", "Create Password", -1, 10, 10, 170, 50);
 
-        JButton changeRootPassButton = createButton("changeRootPassButton", "Change Vault Password", -1, 430, 10, 170, 50);
+        JButton changeRootPassButton = createButton("changeRootPassButton", "Change Vault Passkey", -1, 430, 10, 170, 50);
 
         JButton LogoutButton = createButton("LogoutButton", "Logout", -1, 610, 10, 160, 50);
 
