@@ -31,12 +31,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @return none
          */
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(800,800);
+        this.setSize(800,700);
         this.setResizable(false);
         this.setTitle("CipherX");
         this.getContentPane().setBackground(BGCOLOR);
         this.setLocationRelativeTo(null);
         loadLoginScreen();
+        Encryption.setupAsciiTable();
         this.setVisible(true);
     }
 
@@ -142,7 +143,26 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 }
                 getVisibleComponent(textfield, passwordField).requestFocus();
                 break;
+            case "generatePassButton":
 
+                JPasswordField passwordField1 = null;
+                JTextField textfield1 = null;
+                JPasswordField passwordField2 = null;
+                JTextField textfield2 = null;
+                for (Component component : screenComponents){
+                    if (component.getName() == "firstJPasswordField") passwordField1 = (JPasswordField) component;
+                    if (component.getName() == "secondJPasswordField") passwordField2 = (JPasswordField) component;
+                    if (component.getName() == "firstPsTextField") textfield1 = (JTextField) component;
+                    if (component.getName() == "secondTextField") textfield2 = (JTextField) component;
+                }
+                if (!passwordField1.isVisible()){
+                    swap(textfield1, passwordField1);
+                }
+                if (!passwordField2.isVisible()){
+                    swap(textfield2, passwordField2);
+                }
+                Encryption.setStrongPassword(passwordField1, passwordField2);
+                break;
             default:
                 System.err.println("No Case Found for this Componenet");
                 break;
