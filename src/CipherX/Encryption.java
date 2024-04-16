@@ -11,7 +11,7 @@ import javax.swing.*;
  * 
  */
 public class Encryption {
-    private char[] asciiTable;
+    private static char[] asciiTable;
     private char[] key;
     private char[] password;
     private Random random;
@@ -25,6 +25,19 @@ public class Encryption {
         createKey();
         encryptPassword();
     }
+    public static void setupAsciiTable(){
+        /**
+         * sets up ascii table for all future passwords
+         * 
+         * @param : none
+         * @return : none
+         */
+        //Create ASCII table
+        asciiTable = new char[95];
+        for (char i=' '; i<127; i++){
+            asciiTable[i-32] = i;
+        }
+    }
     private void createKey(){
         /**
          * Creates password key by shuffling ascii table (One time pad).
@@ -32,12 +45,6 @@ public class Encryption {
          * @param none
          * @return none
          */
-        //Create ASCII table
-        char[] asciiTable = new char[95];
-        for (char i=' '; i<127; i++){
-            asciiTable[i-32] = i;
-        }
-        this.asciiTable = asciiTable;
         //Create key
         char[] key = new char[95];
         this.random = new Random();
@@ -102,7 +109,7 @@ public class Encryption {
         Arrays.fill(key, '\0');
         return tmp;
     }
-    private char[] decryptPassword(char[] passwordArray,  char[] key){
+    private static char[] decryptPassword(char[] passwordArray,  char[] key){
         /**
          * decrpyts password (assumming password passed is encrypted).
          * 
@@ -120,6 +127,17 @@ public class Encryption {
             }
         }
         return passwordArray;
+    }
+    public static String getDecryptedPassword(String password, String key){
+        /**
+         * returns a decrypeted password from decryptPassword()
+         * 
+         * @param password : String password to be encrypted
+         * @param key : String key to decrpyt password
+         * 
+         * @return : String decrypted password
+         */
+        return String.valueOf(decryptPassword(password.toCharArray(), key.toCharArray()));
     }
     public static boolean checkTextMacthes(JPasswordField a, JPasswordField b){
         /**
@@ -152,7 +170,7 @@ public class Encryption {
          */
         return !(String.valueOf(a.getText())).equals("");
     }
-    public static boolean checkPasswordRequirments(JPasswordField a){
+    public static boolean checkPasswordRequirments(String password){
         /**
          * validates that JPasswordField meets requierments in method.
          * 
@@ -161,8 +179,9 @@ public class Encryption {
          * @returns boolean: true if JPasswordField is passes requierments; otherwise false
          */
         //Length 8, 1 symbol, 1 uppercase char
-        String password = String.valueOf(a.getPassword());
-        if (!(password.length() >= 8)){
+
+        int PASSWORD_LENGTH = 16;
+        if (!(password.length() >= PASSWORD_LENGTH)){
             return false;
         }
         boolean hasSymbolChar = false;
@@ -185,5 +204,32 @@ public class Encryption {
             }
         }
         return hasSymbolChar && hasUpperChar && hasLowerChar && hasNumChar;
+    }
+    private static String getStrongPassword(){
+        /**
+         * returns strong password based on requierments from checkPasswordRequirments()
+         * 
+         * @param none
+         * @reutrn String : generated password
+         */
+        String password = "";
+        Random rand = new Random();
+        while (true) {
+            if (checkPasswordRequirments(password)){
+                break;
+            } else {
+                password = "";
+                for (int i=0; i<16; i++){
+                    int index = rand.nextInt(asciiTable.length);
+                    password += asciiTable[index];
+                }
+            }
+        }
+        return password;
+    }
+    public static void setStrongPassword(JPasswordField a, JPasswordField b){
+        String password = getStrongPassword();
+        a.setText(password);
+        b.setText(password);
     }
 }
