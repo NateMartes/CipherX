@@ -31,7 +31,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @return none
          */
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(800,700);
+        this.setSize(800,800);
         this.setResizable(false);
         this.setTitle("CipherX");
         this.getContentPane().setBackground(BGCOLOR);
