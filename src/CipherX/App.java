@@ -93,7 +93,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 break;
 
             case "removeButton":
-                // delete password (Zack)
+                // drop password
+                
                 System.out.println("removeButton recieved");
                 break;
 
@@ -677,7 +678,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             passwordPanel.setBackground(BGCOLOR);
 
             JLabel passwordTagLabel = new JLabel("No tag_name found");
-            passwordTagLabel.setPreferredSize(new Dimension(passwordTagLabel.getWidth()+200, passwordTagLabel.getHeight()+200));
+            passwordTagLabel.setPreferredSize(new Dimension(passwordTagLabel.getWidth()+200, passwordTagLabel.getHeight()+45));
             try {
                 passwordTagLabel.setText(databaseConnection.getColumnData("tag_name", i+1)+"   ");
             } catch (SQLException e){
@@ -686,7 +687,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             passwordTagLabel.setFont(new Font(FONT, Font.PLAIN, 22));
 
             JLabel usernameLabel = new JLabel("No username found");
-            usernameLabel.setPreferredSize(new Dimension(usernameLabel.getWidth()+200, usernameLabel.getHeight()+200));
+            usernameLabel.setPreferredSize(new Dimension(usernameLabel.getWidth()+200, usernameLabel.getHeight()+45));
             try {
                 usernameLabel.setText(databaseConnection.getColumnData("username", i+1));
             } catch (SQLException e) {
@@ -695,9 +696,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
             usernameLabel.setFont(new Font(FONT, Font.PLAIN, 22));
 
             JPasswordField passwordPasswordField = new JPasswordField("No password found");
+            passwordPasswordField.setPreferredSize(new Dimension(passwordPasswordField.getWidth()+80, passwordPasswordField.getHeight()+45));
             try {
                 databaseConnection.getColumnData("password", i+1); // Verify existance of a password
-                passwordPasswordField.setText("*****");
+                passwordPasswordField.setText("******");
             } catch (SQLException e) {
                 System.out.println(e);
             }
