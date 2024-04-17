@@ -644,6 +644,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         this.add(buttonPanel, BorderLayout.NORTH);
 
+        // lower password segment
         JPanel passwordPanel = new JPanel();
         passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.Y_AXIS));
         passwordPanel.setBorder(BorderFactory.createLineBorder(BGCOLOR, 0));
@@ -676,6 +677,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             passwordPanel.setBackground(BGCOLOR);
 
             JLabel passwordTagLabel = new JLabel("No tag_name found");
+            passwordTagLabel.setPreferredSize(new Dimension(passwordTagLabel.getWidth()+200, passwordTagLabel.getHeight()+200));
             try {
                 passwordTagLabel.setText(databaseConnection.getColumnData("tag_name", i+1)+"   ");
             } catch (SQLException e){
@@ -684,6 +686,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             passwordTagLabel.setFont(new Font(FONT, Font.PLAIN, 22));
 
             JLabel usernameLabel = new JLabel("No username found");
+            usernameLabel.setPreferredSize(new Dimension(usernameLabel.getWidth()+200, usernameLabel.getHeight()+200));
             try {
                 usernameLabel.setText(databaseConnection.getColumnData("username", i+1));
             } catch (SQLException e) {
