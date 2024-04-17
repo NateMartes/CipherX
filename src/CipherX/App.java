@@ -514,6 +514,15 @@ public class App extends JFrame implements ActionListener, KeyListener{
             verifyLabel.setText("Passwords Must Match");
             return;
         }
+        //Check that tag_name does not exist in Database
+        try {
+            if (databaseConnection.isInDatabase(tagNameTextField.getText())){
+                verifyLabel.setText("Name Already Exists");
+                return;
+            }
+        } catch (SQLException e){
+            System.out.println(e);
+        }
 
         //Save
         saveData(tagNameTextField, usernameTextField, password1JPasswordField);

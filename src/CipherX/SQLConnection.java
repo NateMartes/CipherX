@@ -109,6 +109,36 @@ public class SQLConnection {
         }
         return "";
     }
+    private boolean checkDatabase(String data) throws SQLException{
+        /**
+         * check database for specifc data in a tag_name column
+         * 
+         * @param column : String , column in the database to check
+         * @param data : String, data to be check for in the column
+         * 
+         * @return true the value in the column exists, else, return false
+         */
+        String query = "USE cipherX";
+        stmt.executeUpdate(query);
+        query = "SELECT * FROM passwords WHERE tag_name = ?";
+        PreparedStatement stmtPrepared = connection.prepareStatement(query);
+        //stmtPrepared.setString(1, column);
+        stmtPrepared.setString(1, data);
+        ResultSet result = stmtPrepared.executeQuery();
+        System.out.println(result.next());
+        return result.next();
+    }
+    public boolean isInDatabase(String data) throws SQLException{
+        /**
+         * calls checkDatabase() to query database for specific data
+         * 
+         * @param column : String column to check
+         * @param data : String data to check
+         * 
+         * @return true if data in column, else, return false
+         */
+        return checkDatabase(data);
+    }
     public boolean addRow(String tag_name, String username, String password, String passKey) throws SQLException{
         /**
          * adds row to password table in 'cipherX' database.
