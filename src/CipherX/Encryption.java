@@ -193,11 +193,11 @@ public class Encryption {
                 ((currentChar >= 123) && (currentChar <= 126))) {
                 passwordStrength = passwordStrength | 2;
             } else if ((currentChar >= 65) && (currentChar <= 90)) {
-                passwordStrength = passwordStrength | 3;
-            } else if ((currentChar >= 97) && (currentChar <= 122)) {
                 passwordStrength = passwordStrength | 4;
+            } else if ((currentChar >= 97) && (currentChar <= 122)) {
+                passwordStrength = passwordStrength | 8;
             } else if ((currentChar >= 48) && (currentChar <= 57)) {
-                passwordStrength = passwordStrength | 5;
+                passwordStrength = passwordStrength | 16;
             }
         }
         return passwordStrength;
@@ -212,7 +212,7 @@ public class Encryption {
         String password = "";
         Random rand = new Random();
         while (true) {
-            if (checkPasswordRequirments(password) == 7){
+            if (checkPasswordRequirments(password) == 31){
                 break;
             } else {
                 password = "";

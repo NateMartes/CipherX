@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -20,6 +20,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private JLabel verifyLabel;
     private Boolean loginScreen = false , mainScreen = false, createPassScreen = false;
     private ArrayList<Component> screenComponents = new ArrayList<Component>();
+    private JLabel strengthLabel;
     private JPanel[] passwordPanels;
     private SQLConnection databaseConnection;
 
@@ -187,6 +188,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     swap(textfield2, passwordField2);
                 }
                 Encryption.setStrongPassword(passwordField1, passwordField2);
+                changePasswordStrength(31);
                 break;
             case "copyPassButton":
                 // Copy password (Zack)
@@ -207,7 +209,25 @@ public class App extends JFrame implements ActionListener, KeyListener{
     }
     public void keyTyped(KeyEvent e) {}
     public void keyPressed(KeyEvent e) {}
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+        Component component = e.getComponent();
+        String componentName = component.getName();
+        switch (componentName) {
+            case "firstJPasswordField", "firstPsTextField":
+                if (createPassScreen){
+                    String text = "";
+                    if (componentName == "firstJPasswordField") {
+                        text = String.valueOf(((JPasswordField)component).getPassword()); 
+                    } else {
+                        text = ((JTextField)component).getText();
+                    }
+                    changePasswordStrength(Encryption.checkPasswordRequirments(text));
+                }
+                break;
+            default:
+                break;
+        }
+    }
     private void runstartup(JTextField firstPsTextField, JPasswordField firstJPasswordField){
         /*
          * calls startup methods
@@ -240,6 +260,23 @@ public class App extends JFrame implements ActionListener, KeyListener{
         } else {
             verifyLabel.setText("Empty Password Field");
         }
+    }
+    private void changePasswordStrength(int strength){
+        int rgbGreenVal = 0;
+        int rgbRedVal = 255;
+        int Gincrement = 50;
+        int Rincrement = 40;
+
+        int[] masks = {1,2,4,8,16};
+        for (int mask : masks){
+            if ((strength & mask) == mask){rgbGreenVal+=Gincrement; rgbRedVal -= Rincrement;} 
+        }
+
+        rgbGreenVal = Math.min(Math.max(rgbGreenVal, 0), 255);
+        rgbRedVal = Math.min(Math.max(rgbRedVal, 0), 255);
+
+        strengthLabel.setBackground(new Color(rgbRedVal, rgbGreenVal, 0));
+
     }
     private void clearFrame(){
         /**
@@ -844,6 +881,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JTextField firstPsTextField = createTextField("firstPsTextField", 16, 150, 17, 150, 30);
 
         JButton viewButton = createButton("viewButton", "View", 16, 305, 13, 80, 35);
+
+        JLabel passwordStrengthLabel = createLabel("passwordStrenghtLabel", "Strength : ", 16, 0, 58, 150, 30);
+
+        strengthLabel = createLabel("StrengthLabel", "", 16, 90, 58, 30, 30);
+        strengthLabel.setOpaque(true);
+        strengthLabel.setBackground(new Color(0xEB1C04));
+        strengthLabel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
         
         JPanel firstPasswordFieldPanel = new JPanel();
         firstPasswordFieldPanel.setLayout(null);
@@ -852,6 +896,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPasswordFieldPanel.add(firstJPasswordField);
         firstPasswordFieldPanel.add(firstPsTextField);
         firstPasswordFieldPanel.add(viewButton);
+        firstPasswordFieldPanel.add(passwordStrengthLabel);
+        firstPasswordFieldPanel.add(strengthLabel);
         firstPasswordFieldPanel.setName("firstPasswordFieldPanel");
         saveComponent(firstPasswordFieldPanel);
 
