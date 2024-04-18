@@ -122,10 +122,8 @@ public class SQLConnection {
         stmt.executeUpdate(query);
         query = "SELECT * FROM passwords WHERE tag_name = ?";
         PreparedStatement stmtPrepared = connection.prepareStatement(query);
-        //stmtPrepared.setString(1, column);
         stmtPrepared.setString(1, data);
         ResultSet result = stmtPrepared.executeQuery();
-        System.out.println(result.next());
         return result.next();
     }
     public boolean isInDatabase(String data) throws SQLException{

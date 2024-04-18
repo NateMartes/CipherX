@@ -262,6 +262,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
         }
     }
     private void changePasswordStrength(int strength){
+        /**
+         * adjusts password strength label's color to represent the strength of password
+         * to the client
+         * 
+         * @param strength : int strength of password represented as an int
+         * 
+         * @return : none
+         */
         int rgbGreenVal = 0;
         int rgbRedVal = 255;
         int Gincrement = 50;
