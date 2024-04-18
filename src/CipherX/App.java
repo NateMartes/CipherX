@@ -882,9 +882,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JButton viewButton = createButton("viewButton", "View", 16, 305, 13, 80, 35);
 
-        JLabel passwordStrengthLabel = createLabel("passwordStrenghtLabel", "Strength : ", 16, 0, 58, 150, 30);
+        JLabel passwordStrengthLabel = createLabel("passwordStrenghtLabel", "Strength : ", 16, 0, 48, 150, 30);
 
-        strengthLabel = createLabel("StrengthLabel", "", 16, 90, 58, 30, 30);
+        strengthLabel = createLabel("StrengthLabel", "", 16, 90, 48, 30, 30);
         strengthLabel.setOpaque(true);
         strengthLabel.setBackground(new Color(0xEB1C04));
         strengthLabel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
