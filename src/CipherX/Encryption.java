@@ -170,40 +170,37 @@ public class Encryption {
          */
         return !(String.valueOf(a.getText())).equals("");
     }
-    public static boolean checkPasswordRequirments(String password){
+    public static int checkPasswordRequirments(String password){
         /**
          * validates that JPasswordField meets requierments in method.
          * 
          * @param a : JPasswordField containting text
          * 
-         * @returns boolean: true if JPasswordField is passes requierments; otherwise false
+         * @returns passwordStrength : int strength of password represented by an int using bitWise operations
          */
         //Length 8, 1 symbol, 1 uppercase char
+        int passwordStrength = 0;
 
-        int PASSWORD_LENGTH = 16;
-        if (!(password.length() >= PASSWORD_LENGTH)){
-            return false;
+        int PASSWORD_LENGTH = 12;
+        if (password.length() >= PASSWORD_LENGTH){
+            passwordStrength = passwordStrength | 1;
         }
-        boolean hasSymbolChar = false;
-        boolean hasUpperChar = false;
-        boolean hasLowerChar = false;
-        boolean hasNumChar = false;
         for (int i=0; i<password.length(); i++){
             char currentChar = password.charAt(i);
             if (((currentChar >= 33) && (currentChar <= 47)) || 
                 ((currentChar >= 58) && (currentChar <= 64)) ||
                 ((currentChar >= 91) && (currentChar <= 96)) ||
                 ((currentChar >= 123) && (currentChar <= 126))) {
-                hasSymbolChar = true;
+                passwordStrength = passwordStrength | 2;
             } else if ((currentChar >= 65) && (currentChar <= 90)) {
-                hasUpperChar = true;
+                passwordStrength = passwordStrength | 3;
             } else if ((currentChar >= 97) && (currentChar <= 122)) {
-                hasLowerChar = true;
+                passwordStrength = passwordStrength | 4;
             } else if ((currentChar >= 48) && (currentChar <= 57)) {
-                hasNumChar = true;
+                passwordStrength = passwordStrength | 5;
             }
         }
-        return hasSymbolChar && hasUpperChar && hasLowerChar && hasNumChar;
+        return passwordStrength;
     }
     private static String getStrongPassword(){
         /**
@@ -215,7 +212,7 @@ public class Encryption {
         String password = "";
         Random rand = new Random();
         while (true) {
-            if (checkPasswordRequirments(password)){
+            if (checkPasswordRequirments(password) == 7){
                 break;
             } else {
                 password = "";
