@@ -181,6 +181,59 @@ public class SQLConnection {
         }
         return rowCount;
     }
+    private String[][] rowsAsRecords(){
+        /**
+         * gathers rows from database and formats them into a matrix for file formatting
+         * 
+         * @param none
+         * @return records : String[][] representing rows
+         */
+        try {
+            /*gather rows from SQL database and append them to an array to prepare for file formatting*/
+            String[] columns = {"tag_name","username","password","passKey"};
+            String[][] records = new String[this.getRowCount()][4]; /*3 for name,username,password,passKey*/
+
+            int rowCount = 0;
+            int rowIndexCount = 0;
+
+            ResultSet rows = this.getRows();
+            while (rows.next()){
+                String data = null;
+                for (String column : columns){
+                    data = rows.getString(column);
+                    records[rowCount][rowIndexCount] = data;
+                    if (column.equals("password")){
+                        data = Encryption.getDecryptedPassword(rows.getString("password"), rows.getString("passKey"));
+                        records[rowCount][rowIndexCount] = data;
+                    }
+                    rowIndexCount++;
+                }
+                rowIndexCount = 0;
+                rowCount++;
+            }
+
+            /* Ex: if SQL table had 3 rows, records matrix would appear as:
+             * [[name, username, decrypted password, passKey],
+             *  [name, username, decrypted password, passKey],
+             *  [name, username, decrypted password, passKey]]
+             */
+
+            return records;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public String[][] getRowsAsRecords(){
+        /**
+         * calls rowsAsRecords() to get SQL table rows as a matrix
+         * 
+         * @param none
+         * @return String[][] of SQL table rows
+         */
+        return rowsAsRecords();
+    }
 
     public void exitDatabase() throws SQLException {
         /*

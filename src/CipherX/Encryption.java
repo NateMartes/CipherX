@@ -25,6 +25,17 @@ public class Encryption {
         createKey();
         encryptPassword();
     }
+    Encryption(String password, String key){
+        /**
+         * takes password and a key (assuming the key is correct) and calls methods for encrypting password.
+         * 
+         * @param password: String which contains plaintext 
+         * @param key : String key to encrypt password with
+         */
+        this.password = password.toCharArray();
+        this.key = key.toCharArray();
+        encryptPassword();
+    }
     public static void setupAsciiTable(){
         /**
          * sets up ascii table for all future passwords

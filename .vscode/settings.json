@@ -1,8 +1,15 @@
 {
     "java.project.sourcePaths": ["src"],
     "java.project.outputPath": "bin",
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar"
-    ],
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar"
+        ],
+        "exclude": [
+            "lib/opencsv-5.9-javadoc.jar",
+            "lib/opencsv-5.5-javadoc.jar",
+            "lib/commons-csv-1.10.0-bin/commons-csv-1.10.0/commons-csv-1.10.0.jar"
+        ]
+    },
     "java.dependency.packagePresentation": "flat"
 }

@@ -199,9 +199,25 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 // Copy user (Zack)
                 System.out.println("copyUsrButton Recieved");
                 break;
+            case "exportButton":
 
-            
+                String[][] records = databaseConnection.getRowsAsRecords();
+                new FileScreen(this, records);
+                break;
+            case "importButton":
 
+                records = new FileScreen(this, null).getRecords();
+                for (int i=0; i<records.length; i++){
+                    saveData(records[i][0],records[i][1],records[i][2],records[i][3]);
+                }
+                clearFrame();
+                try {
+                    loadMainScreen();
+                } catch (IOException e1){
+                    e1.printStackTrace();
+                }
+
+                break;
             default:
                 System.err.println("No Case Found for this Componenet");
                 break;
@@ -597,6 +613,21 @@ public class App extends JFrame implements ActionListener, KeyListener{
             System.out.println(e);
         }
     }
+    private void saveData(String tagName, String username, String password, String key){
+        /**
+         * saves password information into database
+         * 
+         * @param tagName : String that contains tag name of password
+         * @param username : String that contains username of password
+         * @param password : String that contains password
+         * @param key : String that contains password key
+         */
+        try {
+            databaseConnection.addRow(tagName, username, password, key);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
 
 
 
@@ -683,7 +714,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(BGCOLOR);
         buttonPanel.setLayout(null);
-        buttonPanel.setPreferredSize(new Dimension(800,100));
+        buttonPanel.setPreferredSize(new Dimension(800,150));
         buttonPanel.setName("buttonPanel");
         saveComponent(buttonPanel);  
 
@@ -693,9 +724,15 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JButton LogoutButton = createButton("LogoutButton", "Logout", -1, 610, 10, 160, 50);
 
+        JButton exportButton = createButton("exportButton", "Export", -1, 610, 70, 160, 50);
+
+        JButton importButton = createButton("importButton", "Import", -1, 10, 70, 170, 50);
+
         buttonPanel.add(createPassButton);
         buttonPanel.add(changeRootPassButton);
         buttonPanel.add(LogoutButton);
+        buttonPanel.add(exportButton);
+        buttonPanel.add(importButton);
 
         this.add(buttonPanel, BorderLayout.NORTH);
 
