@@ -1,6 +1,7 @@
 package CipherX;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -206,9 +207,24 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 break;
             case "importButton":
 
-                records = new FileScreen(this, null).getRecords();
+                FileScreen fileScreen = new FileScreen(this, null);
+                int status = fileScreen.getReturnStatus();
+                records = fileScreen.getRecords();
+
+                if (status != 0){
+                    FileScreen.alertBox(status,this);
+                    break;
+                }
+
                 for (int i=0; i<records.length; i++){
-                    saveData(records[i][0],records[i][1],records[i][2],records[i][3]);
+                    try {
+                        if (databaseConnection.isInDatabase(records[i][0])){ /*check if tag name is in the database */
+                            continue;
+                        }
+                        saveData(records[i][0],records[i][1],records[i][2],records[i][3]);
+                    } catch (SQLException e1){
+                        e1.printStackTrace();
+                    }
                 }
                 clearFrame();
                 try {

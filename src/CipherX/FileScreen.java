@@ -2,11 +2,19 @@ package CipherX;
 import java.io.*;
 import java.nio.charset.Charset;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+
 import java.util.*;
 import org.apache.commons.csv.*;
 
 public class FileScreen extends JFileChooser{
     private static final String FILE_NAME = "cipherxPasswords.csv";
+    private static final String FILE_TYPE = ".csv";
+    private static final String FILE_DESCRIPTOR = "Comma Seperated Values File (.csv)";
+    private static final int FILE_FORMAT_ERROR = 1;
+    private static final int FILE_SCREEN_CLOSED_ERROR = 2;
+    private int returnVal = 0;
+    private FileFilter fileFilter;
     private JFrame parent;
     private String[][] records;
     FileScreen(JFrame screen, String[][] records){
@@ -20,11 +28,34 @@ public class FileScreen extends JFileChooser{
          * @return none
          */
         this.parent = screen;
+        setFileFilter();
         if (records == null){
             importFile();
         } else {
             exportFile(records);
         }
+    }
+    private void setFileFilter(){
+        /**
+         * sets up fileFilter to only accept FILE_TYPE
+         * 
+         * @param none
+         * @return none
+         */
+        FileFilter fileFilter = new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(FILE_TYPE) && f.isFile();
+            }
+
+            @Override
+            public String getDescription() {
+                return FILE_DESCRIPTOR;
+            }
+            
+        };
+        this.fileFilter = fileFilter;
     }
     private void exportFile(String[][] records){
         /**
@@ -36,9 +67,9 @@ public class FileScreen extends JFileChooser{
 
         this.setSelectedFile(new File(FILE_NAME));
         this.showSaveDialog(parent);
-        File outputFile = this.getSelectedFile();
 
         try {
+            File outputFile = this.getSelectedFile();
             CSVPrinter csvStream;
             csvStream = new CSVPrinter(new FileWriter(outputFile), CSVFormat.EXCEL);
             csvStream.printRecord("name","username","password", "passKey");
@@ -57,9 +88,20 @@ public class FileScreen extends JFileChooser{
          */
         try{
 
+        this.setFileFilter(fileFilter);
         this.showOpenDialog(parent);
-        File importFile = this.getSelectedFile();
-        CSVParser csvParser = CSVParser.parse(importFile, Charset.forName("UTF-8") ,CSVFormat.EXCEL);
+        File file = this.getSelectedFile();
+
+        if (file == null){
+            this.returnVal = FILE_SCREEN_CLOSED_ERROR;
+            return;
+        }
+        if (!fileFilter.accept(file)){
+            this.returnVal = FILE_FORMAT_ERROR;
+            return;
+        }
+        
+        CSVParser csvParser = CSVParser.parse(file, Charset.forName("UTF-8") ,CSVFormat.EXCEL);
         List<CSVRecord> allCSVRecords = csvParser.getRecords();
 
         allCSVRecords.remove(0); //remove header record
@@ -81,10 +123,9 @@ public class FileScreen extends JFileChooser{
                 recordCount++;
             }
 
-        } catch (IOException e){
-            e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
+            this.returnVal = FILE_FORMAT_ERROR;
         }
     }
     public String[][] getRecords(){
@@ -95,5 +136,40 @@ public class FileScreen extends JFileChooser{
          * @return records : String[][] records from CSV file
          */
         return this.records;
+    }
+    public static void alertBox(int error, JFrame parent){
+        /**
+         * pops up a JOptionPane to notify user an error has occured
+         * 
+         * @param error : int error type represented as an int
+         * @param parent : JFrame to display JOptionPane
+         * 
+         * @return none
+         */
+        String outputString = "";
+        int errorMsg = JOptionPane.ERROR_MESSAGE;;
+        switch (error) {
+            case FILE_SCREEN_CLOSED_ERROR:
+            outputString = "Please enter a CSV (Comma Seperated Value) file";
+            errorMsg = JOptionPane.WARNING_MESSAGE;
+                break;
+            case FILE_FORMAT_ERROR:
+            outputString = "Please check the formatting of your file";
+            errorMsg = JOptionPane.WARNING_MESSAGE;
+                break;
+            default:
+            outputString = "An Error Occurred";
+                break;
+        }
+        JOptionPane.showMessageDialog(parent, outputString, "Import Error", errorMsg);
+    }
+    public int getReturnStatus(){
+        /**
+         * returns the status of importing the file, needed for error checking
+         * 
+         * @param none
+         * @return returnVal : int status of import, represented as an integer
+         */
+        return returnVal;
     }
 }
