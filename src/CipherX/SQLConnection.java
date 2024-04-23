@@ -1,6 +1,8 @@
 package CipherX;
 import java.sql.*;
 
+import com.mysql.cj.x.protobuf.MysqlxPrepare.Prepare;
+
 /**
  * SQLConnection
  * 
@@ -55,6 +57,8 @@ public class SQLConnection {
         stmt.executeUpdate(query);
         query = "CREATE TABLE passwords (tag_name VARCHAR(100), username VARCHAR(100), password VARCHAR(255), passKey VARCHAR(255))";
         stmt.executeUpdate(query);     
+        // query = "SET SQL_SAFE_UPDATES = 0";
+        // stmt.executeUpdate(query);
     }
     public boolean setRootPassword(String newPassword) throws SQLException{
         /**
@@ -163,6 +167,34 @@ public class SQLConnection {
             return true;
         } catch (SQLException e){
             System.out.println(e);
+            return false;
+        }
+    }
+
+    public boolean dropRow(String tag_name) throws SQLException {
+        try {
+            String query = "USE cipherX";
+            stmt.executeUpdate(query);
+
+            // turn safety off
+            query = "SET SQL_SAFE_UPDATES = 0";
+            stmt.executeUpdate(query);
+
+
+            // delete row
+            query = "DELETE FROM passwords WHERE tag_name = ?";
+            PreparedStatement stmtPrepared = connection.prepareStatement(query);
+            stmtPrepared.setString(1, tag_name);
+            stmtPrepared.executeUpdate();
+
+            // // turn safety on
+            query = "SET SQL_SAFE_UPDATES = 1";
+            stmt.executeUpdate(query);
+
+            return true;
+            
+        } catch(SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }

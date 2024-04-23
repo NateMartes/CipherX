@@ -68,13 +68,19 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     if (component.getName() == "secondJPasswordField") passwordField2 = (JPasswordField) component;
                 }
                 if (c.getName() == "submitButton") validateInputOnCreatePassScreen();
-                if (c.getName() == "firstJPasswordField"|| c.getName() == "firstJPsTextField") getVisibleComponent(textfield2, passwordField2).requestFocus();
+                if (c.getName() == "firstJPasswordField" || c.getName() == "firstJPsTextField") getVisibleComponent(textfield2, passwordField2).requestFocus();
             }
             break;
 
             case "viewButton":
                 if (mainScreen) {
-                    System.out.println("viewButton recieved");
+                    System.out.println("viewButton Recieved");
+
+                    // for (Component component : screenComponents){
+                    //     if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
+                    //     if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
+                    // }
+                    // swap(textfield, passwordField);
                 }
                 else {
                     textfield = null;
@@ -85,17 +91,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     }
                     swap(textfield, passwordField);
                 }
-                break;
-
-            case "editButton":
-                // edit password (Zack)
-                System.out.println("editButton recieved");
-                break;
-
-            case "removeButton":
-                // drop password
-                
-                System.out.println("removeButton recieved");
                 break;
 
             case "viewButton1":
@@ -188,26 +183,54 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 }
                 Encryption.setStrongPassword(passwordField1, passwordField2);
                 break;
-            case "copyPassButton":
-                // Copy password (Zack)
-                System.out.println("copyPassButton Recieved");
-                break;
 
-            case "copyUsrButton":
-                // Copy user (Zack)
-                System.out.println("copyUsrButton Recieved");
-                break;
+            // case "copyPassButton":
+            //     // Copy password (Zack)
+            //     System.out.println("copyPassButton Recieved");
+            //     break;
 
-            
+            // case "copyUsrButton":
+            //     // Copy user (Zack)
+            //     System.out.println("copyUsrButton Recieved");
+            //     break;
+
+            // case "editButton":
+            //     // edit password (Zack)
+            //     System.out.println("editButton recieved");
+            //     break;
+
+            case "removeButton":
+                // drop password
+                String tag_name = c.getParent().getName();
+                System.out.println("'" + tag_name + "'");
+                try {
+                    databaseConnection.dropRow(tag_name);
+                }
+                catch (SQLException err) {  
+                    System.err.println(err);
+                }
+
+                clearFrame();
+                try {
+                    loadMainScreen();
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+
+                System.out.println("removeButton recieved");
+                break;
 
             default:
+                
                 System.err.println("No Case Found for this Componenet");
-                break;
         }
     }
+
     public void keyTyped(KeyEvent e) {}
     public void keyPressed(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
+
     private void runstartup(JTextField firstPsTextField, JPasswordField firstJPasswordField){
         /*
          * calls startup methods
@@ -354,7 +377,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
         saveComponent(newButton);
         return newButton;
     }
-
     private JButton createButton(String name, Image img, int width, int height){
         /**
          * Creates JButton with all reqiured methods
@@ -385,7 +407,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
         saveComponent(newButton);
         return newButton;
     }
-
     private JLabel createLabel(String name, String text, int fontSize, int x, int y, int width, int height){
         /**
          * Creates JLabel with all reqiured methods
@@ -530,6 +551,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         clearFrame();
         
         try {
+
             loadMainScreen();
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -689,7 +711,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
             JLabel passwordTagLabel = new JLabel("No tag_name found");
             passwordTagLabel.setPreferredSize(new Dimension(passwordTagLabel.getWidth()+200, passwordTagLabel.getHeight()+45));
             try {
-                passwordTagLabel.setText(databaseConnection.getColumnData("tag_name", i+1)+"   ");
+                String tag_name = databaseConnection.getColumnData("tag_name", i+1);  
+                passwordTagLabel.setText(tag_name);
+                passwordPanel.setName(tag_name);
             } catch (SQLException e){
                 System.out.println(e);
             }
