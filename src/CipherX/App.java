@@ -184,6 +184,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     swap(textfield2, passwordField2);
                 }
                 Encryption.setStrongPassword(passwordField1, passwordField2);
+                changePasswordStrength(31);
                 break;
 
             // case "copyPassButton":
