@@ -19,7 +19,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     public static final Color BGCOLOR = new Color(0x757981);
     public static final String FONT = "Verdana";
     private JLabel verifyLabel;
-    private Boolean loginScreen = false , mainScreen = false, createPassScreen = false;
+    private Boolean loginScreen = false , mainScreen = false, createPassScreen = false, changeRootScreen = false, editScreen = false;
     private ArrayList<Component> screenComponents = new ArrayList<Component>();
     private JLabel strengthLabel;
     private JPanel[] passwordPanels;
@@ -113,8 +113,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 break;
 
             case "changeRootPassButton":
-                // change root password (Zack)
-
+                
+                clearFrame();
+                loadSubScreen("Change Vault Password");
+                changeRootScreen = true; /* change root password screen is now visible */
+                
                 break;
 
             case "LogoutButton":
@@ -371,6 +374,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         loginScreen = false;
         mainScreen = false;
         createPassScreen = false;
+        changeRootScreen = false;
+        editScreen = false;
     }
     private Component getVisibleComponent(Component a, Component b){
         /**
@@ -1053,6 +1058,104 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.setVisible(true);
 
         createPassScreen = true;
+    }
+    private void loadSubScreen(String name){
+        /**
+         * loads sub screen for changing passwords
+         * 
+         * @param name : String name for the screen
+         * @return none
+         */
+        this.setLayout(new GridLayout(3,1,0,10));
+
+        JPanel IntroPanel = new JPanel();
+        IntroPanel.setLayout(null);
+        
+        JLabel IntroLabel = createLabel("IntroLabel", name, 30, 20, 5, 400, 60);
+
+        JButton goBackButton = createButton("goBackButton", "Cancel", 16, 680, 20, 0, 30);
+        goBackButton.setSize(new Dimension(100,30));
+        goBackButton.setAlignmentX(JButton.RIGHT);
+
+        IntroPanel.add(IntroLabel);
+        IntroPanel.add(goBackButton);
+        IntroPanel.setBackground(BGCOLOR);
+        IntroPanel.setName("IntroPanel");
+        saveComponent(IntroPanel);
+        
+        JPanel passwordJPanel = new JPanel();
+        passwordJPanel.setLayout(new BoxLayout(passwordJPanel, BoxLayout.Y_AXIS));
+        passwordJPanel.setBorder(BorderFactory.createLineBorder(BGCOLOR, 0));
+        passwordJPanel.setBackground(BGCOLOR);
+        passwordJPanel.setName("passwordJPanel");
+        saveComponent(passwordJPanel);
+
+        JLabel firstPasswordLabel = createLabel("firstPasswordLabel", "Password", 16, 200, 17, 150, 30);
+
+        JPasswordField firstJPasswordField = createJPasswordField("firstJPasswordField", 16, 375, 17, 150, 30);
+
+        JTextField firstPsTextField = createTextField("firstPsTextField", 16, 375, 17, 150, 30);
+
+        JButton viewButton = createButton("viewButton", "View", 16, 530, 15, 80, 35);
+
+        JLabel passwordStrengthLabel = createLabel("passwordStrenghtLabel", "Strength : ", 16, 200, 58, 150, 30);
+
+        strengthLabel = createLabel("StrengthLabel", "", 16, 295, 58, 30, 30);
+        strengthLabel.setOpaque(true);
+        strengthLabel.setBackground(new Color(0xEB1C04));
+        strengthLabel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        
+        JPanel firstPasswordFieldPanel = new JPanel();
+        firstPasswordFieldPanel.setLayout(null);
+        firstPasswordFieldPanel.setBackground(BGCOLOR);
+        firstPasswordFieldPanel.add(firstPasswordLabel);
+        firstPasswordFieldPanel.add(firstJPasswordField);
+        firstPasswordFieldPanel.add(firstPsTextField);
+        firstPasswordFieldPanel.add(viewButton);
+        firstPasswordFieldPanel.add(passwordStrengthLabel);
+        firstPasswordFieldPanel.add(strengthLabel);
+        firstPasswordFieldPanel.setName("firstPasswordFieldPanel");
+        saveComponent(firstPasswordFieldPanel);
+
+        JLabel secondPasswordLabel = createLabel("secondPasswordLabel", "Verify Password", 16, 200, 17, 150, 30);
+        secondPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
+
+        JPasswordField secondJPasswordField = createJPasswordField("secondJPasswordField", 16, 375, 17, 150, 30);
+
+        JTextField secondTextField = createTextField("secondTextField", 16, 375, 17, 150, 30);
+
+        JButton viewButton1 = createButton("viewButton1", "View", 16, 530, 13, 80, 35);
+
+        JPanel secondPasswordFieldPanel = new JPanel();
+        secondPasswordFieldPanel.setLayout(null);
+        secondPasswordFieldPanel.setBackground(BGCOLOR);
+        secondPasswordFieldPanel.add(secondPasswordLabel);
+        secondPasswordFieldPanel.add(secondJPasswordField);
+        secondPasswordFieldPanel.add(secondTextField);
+        secondPasswordFieldPanel.add(viewButton1);
+        secondPasswordFieldPanel.setName("secondPasswordFieldPanel");
+        saveComponent(secondPasswordFieldPanel);
+
+        JButton submitButton = createButton("submitButton", "Enter", 16, 400, 0, 100, 30);
+
+        verifyLabel = createLabel("verifyLabel", "", 16, 350, 50, 300, 20);
+
+        JPanel submitPanel = new JPanel();
+        submitPanel.setLayout(null);
+        submitPanel.setBackground(BGCOLOR);
+        submitPanel.add(submitButton);
+        submitPanel.add(verifyLabel);
+        submitPanel.setName("submitPanel");
+        saveComponent(submitPanel);
+
+        passwordJPanel.add(firstPasswordFieldPanel);
+        passwordJPanel.add(secondPasswordFieldPanel);
+
+        this.add(IntroPanel);
+        this.add(passwordJPanel);
+        this.add(submitPanel);
+        
+        this.setVisible(true);
     }
 
 }
