@@ -1,9 +1,10 @@
 package CipherX;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -20,6 +21,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private JLabel verifyLabel;
     private Boolean loginScreen = false , mainScreen = false, createPassScreen = false;
     private ArrayList<Component> screenComponents = new ArrayList<Component>();
+    private JLabel strengthLabel;
     private JPanel[] passwordPanels;
     private SQLConnection databaseConnection;
 
@@ -189,6 +191,45 @@ public class App extends JFrame implements ActionListener, KeyListener{
             //     System.out.println("copyPassButton Recieved");
             //     break;
 
+            case "copyUsrButton":
+                // Copy user (Zack)
+                System.out.println("copyUsrButton Recieved");
+                break;
+
+            case "exportButton":
+                String[][] records = databaseConnection.getRowsAsRecords();
+                new FileScreen(this, records);
+                break;
+
+            case "importButton":
+                FileScreen fileScreen = new FileScreen(this, null);
+                int status = fileScreen.getReturnStatus();
+                records = fileScreen.getRecords();
+
+                if (status != 0){
+                    FileScreen.alertBox(status,this);
+                    break;
+                }
+
+                for (int i=0; i<records.length; i++){
+                    try {
+                        if (databaseConnection.isInDatabase(records[i][0])){ /*check if tag name is in the database */
+                            continue;
+                        }
+                        saveData(records[i][0],records[i][1],records[i][2],records[i][3]);
+                    } catch (SQLException e1){
+                        e1.printStackTrace();
+                    }
+                }
+                clearFrame();
+                try {
+                    loadMainScreen();
+                } catch (IOException e1){
+                    e1.printStackTrace();
+                }
+
+                break;
+                
             // case "copyUsrButton":
             //     // Copy user (Zack)
             //     System.out.println("copyUsrButton Recieved");
@@ -229,8 +270,25 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
     public void keyTyped(KeyEvent e) {}
     public void keyPressed(KeyEvent e) {}
-    public void keyReleased(KeyEvent e) {}
-
+    public void keyReleased(KeyEvent e) {
+        Component component = e.getComponent();
+        String componentName = component.getName();
+        switch (componentName) {
+            case "firstJPasswordField", "firstPsTextField":
+                if (createPassScreen){
+                    String text = "";
+                    if (componentName == "firstJPasswordField") {
+                        text = String.valueOf(((JPasswordField)component).getPassword()); 
+                    } else {
+                        text = ((JTextField)component).getText();
+                    }
+                    changePasswordStrength(Encryption.checkPasswordRequirments(text));
+                }
+                break;
+            default:
+                break;
+        }
+    }
     private void runstartup(JTextField firstPsTextField, JPasswordField firstJPasswordField){
         /*
          * calls startup methods
@@ -263,6 +321,31 @@ public class App extends JFrame implements ActionListener, KeyListener{
         } else {
             verifyLabel.setText("Empty Password Field");
         }
+    }
+    private void changePasswordStrength(int strength){
+        /**
+         * adjusts password strength label's color to represent the strength of password
+         * to the client
+         * 
+         * @param strength : int strength of password represented as an int
+         * 
+         * @return : none
+         */
+        int rgbGreenVal = 0;
+        int rgbRedVal = 255;
+        int Gincrement = 50;
+        int Rincrement = 40;
+
+        int[] masks = {1,2,4,8,16};
+        for (int mask : masks){
+            if ((strength & mask) == mask){rgbGreenVal+=Gincrement; rgbRedVal -= Rincrement;} 
+        }
+
+        rgbGreenVal = Math.min(Math.max(rgbGreenVal, 0), 255);
+        rgbRedVal = Math.min(Math.max(rgbRedVal, 0), 255);
+
+        strengthLabel.setBackground(new Color(rgbRedVal, rgbGreenVal, 0));
+
     }
     private void clearFrame(){
         /**
@@ -574,6 +657,21 @@ public class App extends JFrame implements ActionListener, KeyListener{
             System.out.println(e);
         }
     }
+    private void saveData(String tagName, String username, String password, String key){
+        /**
+         * saves password information into database
+         * 
+         * @param tagName : String that contains tag name of password
+         * @param username : String that contains username of password
+         * @param password : String that contains password
+         * @param key : String that contains password key
+         */
+        try {
+            databaseConnection.addRow(tagName, username, password, key);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
 
 
 
@@ -660,7 +758,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(BGCOLOR);
         buttonPanel.setLayout(null);
-        buttonPanel.setPreferredSize(new Dimension(800,100));
+        buttonPanel.setPreferredSize(new Dimension(800,150));
         buttonPanel.setName("buttonPanel");
         saveComponent(buttonPanel);  
 
@@ -670,9 +768,15 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JButton LogoutButton = createButton("LogoutButton", "Logout", -1, 610, 10, 160, 50);
 
+        JButton exportButton = createButton("exportButton", "Export", -1, 610, 70, 160, 50);
+
+        JButton importButton = createButton("importButton", "Import", -1, 10, 70, 170, 50);
+
         buttonPanel.add(createPassButton);
         buttonPanel.add(changeRootPassButton);
         buttonPanel.add(LogoutButton);
+        buttonPanel.add(exportButton);
+        buttonPanel.add(importButton);
 
         this.add(buttonPanel, BorderLayout.NORTH);
 
@@ -868,6 +972,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JTextField firstPsTextField = createTextField("firstPsTextField", 16, 150, 17, 150, 30);
 
         JButton viewButton = createButton("viewButton", "View", 16, 305, 13, 80, 35);
+
+        JLabel passwordStrengthLabel = createLabel("passwordStrenghtLabel", "Strength : ", 16, 0, 48, 150, 30);
+
+        strengthLabel = createLabel("StrengthLabel", "", 16, 90, 48, 30, 30);
+        strengthLabel.setOpaque(true);
+        strengthLabel.setBackground(new Color(0xEB1C04));
+        strengthLabel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
         
         JPanel firstPasswordFieldPanel = new JPanel();
         firstPasswordFieldPanel.setLayout(null);
@@ -876,6 +987,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         firstPasswordFieldPanel.add(firstJPasswordField);
         firstPasswordFieldPanel.add(firstPsTextField);
         firstPasswordFieldPanel.add(viewButton);
+        firstPasswordFieldPanel.add(passwordStrengthLabel);
+        firstPasswordFieldPanel.add(strengthLabel);
         firstPasswordFieldPanel.setName("firstPasswordFieldPanel");
         saveComponent(firstPasswordFieldPanel);
 

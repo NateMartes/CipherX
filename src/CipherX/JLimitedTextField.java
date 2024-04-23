@@ -1,6 +1,4 @@
 package CipherX;
-
-import javax.swing.*;
 import javax.swing.text.*;
 
 public class JLimitedTextField extends PlainDocument {

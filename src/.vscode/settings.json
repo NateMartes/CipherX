@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\natem\\OneDrive\\Desktop\\CS\\Java\\CipherX_V9\\CipherX\\lib\\mysql-connector-j-8.0.33.jar",
+        "c:\\Users\\natem\\OneDrive\\Desktop\\CS\\Java\\CipherX_V9\\CipherX\\lib\\commons-csv-1.10.0-sources.jar",
+        "c:\\Users\\natem\\OneDrive\\Desktop\\CS\\Java\\CipherX_V9\\CipherX\\lib\\commons-csv-1.10.0.jar"
+    ]
+}
