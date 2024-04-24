@@ -729,7 +729,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         swap(textfield, passwordField);
         swap(textfield, passwordField);
 
-        if (Encryption.checkTextMacthes(passwordField, passwordField1)){
+        if (Encryption.notEmpty(passwordField) && Encryption.notEmpty(passwordField1)){
 
             int output = JOptionPane.showOptionDialog(this,(Object)"You will be logged out and your password will be changed. Do you wish to proceed?","Caution",
                           JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE, null, new Object[]{"Yes","No","Cancel"}, "No");
@@ -743,8 +743,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 clearFrame();
                 loadLoginScreen();
             }
-        } else {
+        } else if (!Encryption.checkTextMacthes(passwordField, passwordField1)){
             verifyLabel.setText("Passwords Must Match");
+        } else {
+            verifyLabel.setText("Password is Empty");
         }
     }
     private void saveData(JTextField tagNameTextField, JTextField usernameTextField, JPasswordField password1JPasswordField){
