@@ -54,7 +54,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         System.out.println(c.getName());
         switch (c.getName()) {
         case "submitButton","firstJPasswordField","firstPsTextField":
-            if (loginScreen){
+            if (loginScreen) {
                 textfield = null;
                 passwordField = null;
                 for (Component component : screenComponents){
@@ -76,13 +76,31 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             case "viewButton":
                 if (mainScreen) {
-                    System.out.println("viewButton Recieved");
-
-                    // for (Component component : screenComponents){
-                    //     if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
-                    //     if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
-                    // }
-                    // swap(textfield, passwordField);
+                    // System.out.println(c.getParent().getComponents());
+                    // JTextField passwordTextField = null;
+                    int count = 0;
+                    for (JPanel panel : passwordPanels) {
+                        if (panel.getName().equals(c.getParent().getName())) {
+                            break;
+                        }
+                        count ++;
+                    }
+                    
+                    for (Component component : c.getParent().getComponents()){
+                        if (component.getName() == "passwordTextField") {
+                            try {
+                                if (((JTextField) component).getText().equals(Encryption.getDecryptedPassword(databaseConnection.getColumnData("password", count+1), databaseConnection.getColumnData("passKey", count+1)))) {
+                                    ((JTextField) component).setText("••••••");
+                                }
+                                else {
+                                    ((JTextField) component).setText(Encryption.getDecryptedPassword(databaseConnection.getColumnData("password", count +1), databaseConnection.getColumnData("passKey", count+1)));
+                                }
+                            } catch (SQLException e1) {
+                                // TODO Auto-generated catch block
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
                 }
                 else {
                     textfield = null;
@@ -789,7 +807,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
         loadPasswords(passwordPanel);
         saveComponent(passwordPanel);
         
-        this.add(new JScrollPane(passwordPanel), BorderLayout.CENTER);
+        JScrollPane paneScroller = new JScrollPane(passwordPanel);
+        paneScroller.getVerticalScrollBar().setUnitIncrement(5);
+        this.add(paneScroller, BorderLayout.CENTER);
         this.setVisible(true);
 
         mainScreen = true;
@@ -832,17 +852,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
             }
             usernameLabel.setFont(new Font(FONT, Font.PLAIN, 22));
 
-            JPasswordField passwordPasswordField = new JPasswordField("No password found");
-            passwordPasswordField.setPreferredSize(new Dimension(passwordPasswordField.getWidth()+80, passwordPasswordField.getHeight()+45));
-            try {
-                databaseConnection.getColumnData("password", i+1); // Verify existance of a password
-                passwordPasswordField.setText("******");
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-
-            passwordPasswordField.setFont(new Font(FONT, Font.PLAIN, 22));
-            passwordPasswordField.setEditable(false);
+            JTextField passwordTextField = new JTextField("••••••");
+            passwordTextField.setPreferredSize(new Dimension(passwordTextField.getWidth()+80, passwordTextField.getHeight()+45));
+            passwordTextField.setName("passwordTextField");
+            passwordTextField.setFont(new Font(FONT, Font.PLAIN, 22));
+            passwordTextField.setEditable(false);
 
             int buttonW = 45;
             int buttonH = 45;
@@ -863,7 +877,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             passwordPanel.add(passwordTagLabel);
             passwordPanel.add(usernameLabel);
             passwordPanel.add(copyUsrButton);
-            passwordPanel.add(passwordPasswordField);
+            passwordPanel.add(passwordTextField);
             passwordPanel.add(copyPassButton);
             passwordPanel.add(viewButton);
             passwordPanel.add(editButton);
