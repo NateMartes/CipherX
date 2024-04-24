@@ -1,5 +1,7 @@
 package CipherX;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.IOException;
 import java.sql.*;
@@ -107,7 +109,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                                     ((JTextField) component).setText(Encryption.getDecryptedPassword(databaseConnection.getColumnData("password", count +1), databaseConnection.getColumnData("passKey", count+1)));
                                 }
                             } catch (SQLException e1) {
-                                // TODO Auto-generated catch block
                                 e1.printStackTrace();
                             }
                         }
@@ -170,7 +171,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 try {
                     loadMainScreen();
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
                 break;
@@ -222,13 +222,44 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 changePasswordStrength(31);
                 break;
 
-            // case "copyPassButton":
-            //     // Copy password (Zack)
-            //     System.out.println("copyPassButton Recieved");
-            //     break;
-
             case "copyUsrButton":
+                // Copy password (Zack)
+                int count1 = 0;
+                for (JPanel panel : passwordPanels) {
+                    if (panel.getName().equals(c.getParent().getName())) {
+                        break;
+                    }
+                    count1 ++;
+                }
+                try {
+                    StringSelection usernamestring = new StringSelection(databaseConnection.getColumnData("username", count1+1));
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(usernamestring, null);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+                System.out.println("copyPassButton Recieved");
+                break;
+
+            case "copyPassButton":
                 // Copy user (Zack)
+                int count2 = 0;
+                for (JPanel panel : passwordPanels) {
+                    if (panel.getName().equals(c.getParent().getName())) {
+                        break;
+                    }
+                    count2 ++;
+                }
+                try {
+                    StringSelection passwordstring = new StringSelection(Encryption.getDecryptedPassword(databaseConnection.getColumnData("password", count2+1), databaseConnection.getColumnData("passKey", count2+1)));
+                    System.out.println(passwordstring.toString());
+                    Clipboard clipboard1 = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard1.setContents(passwordstring, null);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+                
+
                 System.out.println("copyUsrButton Recieved");
                 break;
 
@@ -266,15 +297,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
                 break;
                 
-            // case "copyUsrButton":
-            //     // Copy user (Zack)
-            //     System.out.println("copyUsrButton Recieved");
-            //     break;
-
-            // case "editButton":
-            //     // edit password (Zack)
-            //     System.out.println("editButton recieved");
-            //     break;
+            case "editButton":
+                // edit password (Zack)
+                System.out.println("editButton recieved");
+                break;
 
             case "removeButton":
                 // drop password
@@ -291,7 +317,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 try {
                     loadMainScreen();
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
 
@@ -344,7 +369,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 try {
                     loadMainScreen();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             } catch (SQLException e1) {
@@ -675,7 +699,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
             loadMainScreen();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
@@ -921,7 +944,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             JTextField passwordTextField = new JTextField("••••••");
             passwordTextField.setPreferredSize(new Dimension(passwordTextField.getWidth()+80, passwordTextField.getHeight()+45));
             passwordTextField.setName("passwordTextField");
-            passwordTextField.setFont(new Font(FONT, Font.PLAIN, 22));
+            passwordTextField.setFont(new Font(FONT, Font.PLAIN, 16));
             passwordTextField.setEditable(false);
 
             int buttonW = 45;
