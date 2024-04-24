@@ -729,7 +729,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         swap(textfield, passwordField);
         swap(textfield, passwordField);
 
-        if (Encryption.notEmpty(passwordField) && Encryption.notEmpty(passwordField1)){
+        if (Encryption.notEmpty(passwordField) && Encryption.notEmpty(passwordField1) && Encryption.checkTextMacthes(passwordField, passwordField1)){
 
             int output = JOptionPane.showOptionDialog(this,(Object)"You will be logged out and your password will be changed. Do you wish to proceed?","Caution",
                           JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE, null, new Object[]{"Yes","No","Cancel"}, "No");
