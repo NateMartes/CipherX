@@ -139,7 +139,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
             case "createPassButton":
 
                 clearFrame();
-                loadCreatePassScreen();
+                loadPassScreen("Create Password");
+                createPassScreen = true;
                 break;
 
             case "changeRootPassButton":
@@ -978,11 +979,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
             passwordPanels[i] = passwordPanel;
         }
     }
-    private void loadCreatePassScreen(){
+    private void loadPassScreen(String name){
         /**
-         * loads create password screen and all needed components
+         * loads password screen and all needed components
          * 
-         * @param none
+         * @param name : String name of the screen 
          * @return none
          */
         
@@ -991,7 +992,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JPanel IntroPanel = new JPanel();
         IntroPanel.setLayout(null);
         
-        JLabel IntroLabel = createLabel("IntroLabel", "Create Password", 30, 20, 5, 400, 60);
+        JLabel IntroLabel = createLabel("IntroLabel", name, 30, 20, 5, 400, 60);
 
         IntroPanel.add(IntroLabel);
         IntroPanel.setBackground(BGCOLOR);
@@ -1155,8 +1156,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.add(passwordJPanel);
         
         this.setVisible(true);
-
-        createPassScreen = true;
     }
     private void loadSubScreen(String name){
         /**
