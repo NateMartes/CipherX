@@ -1,7 +1,6 @@
 package CipherX;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -62,6 +61,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
                 }
                 runstartup(textfield, passwordField);
+
             } else if (createPassScreen){
                 JTextField textfield2 = null;
                 JPasswordField passwordField2 = null;
@@ -71,8 +71,19 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 }
                 if (c.getName() == "submitButton") validateInputOnCreatePassScreen();
                 if (c.getName() == "firstJPasswordField" || c.getName() == "firstJPsTextField") getVisibleComponent(textfield2, passwordField2).requestFocus();
+
+            } else if (changeRootScreen){
+                JTextField textfield2 = null;
+                JPasswordField passwordField2 = null;
+                for (Component component : screenComponents){
+                    if (component.getName() == "secondTextField") textfield2 = (JTextField) component;
+                    if (component.getName() == "secondJPasswordField") passwordField2 = (JPasswordField) component;
+                }
+                if (c.getName() == "submitButton") validateInputOnChangeRootScreen();
+                if (c.getName() == "firstJPasswordField" || c.getName() == "firstPsTextField") getVisibleComponent(textfield2, passwordField2).requestFocus();
             }
-            break;
+
+                break;
 
             case "viewButton":
                 if (mainScreen) {
@@ -147,8 +158,11 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 break;
 
             case "secondTextField","secondJPasswordField":
-
-                validateInputOnCreatePassScreen();
+                if (createPassScreen){
+                    validateInputOnCreatePassScreen();
+                } else if (changeRootScreen){
+                    validateInputOnChangeRootScreen();
+                }
                 break;
 
             case "tagnameTextField":
@@ -279,7 +293,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         String componentName = component.getName();
         switch (componentName) {
             case "firstJPasswordField", "firstPsTextField":
-                if (createPassScreen){
+                if (createPassScreen || changeRootScreen){
                     String text = "";
                     if (componentName == "firstJPasswordField") {
                         text = String.valueOf(((JPasswordField)component).getPassword()); 
@@ -648,6 +662,50 @@ public class App extends JFrame implements ActionListener, KeyListener{
         }
         
     }
+    private void validateInputOnChangeRootScreen(){
+        /**
+         * check inputs on chnage root password screen and if all inputs are correct,
+         * change root password.
+         * 
+         * @param none
+         * @return none
+         */
+        JTextField textfield = null;
+        JPasswordField passwordField = null;
+        JTextField textfield1 = null;
+        JPasswordField passwordField1 = null;
+        for (Component component : screenComponents){
+            if (component.getName() == "firstPsTextField") textfield = (JTextField) component;
+            if (component.getName() == "firstJPasswordField") passwordField = (JPasswordField) component;
+            if (component.getName() == "secondTextField") textfield1 = (JTextField) component;
+            if (component.getName() == "secondJPasswordField") passwordField1 = (JPasswordField) component;
+        }
+        
+        /* swap and reswap compoenents to ensure password is properly collected */
+        swap(textfield1, passwordField1);
+        swap(textfield1, passwordField1);
+
+        swap(textfield, passwordField);
+        swap(textfield, passwordField);
+
+        if (Encryption.checkTextMacthes(passwordField, passwordField1)){
+
+            int output = JOptionPane.showOptionDialog(this,(Object)"You will be logged out and your password will be changed. Do you wish to proceed?","Caution",
+                          JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE, null, new Object[]{"Yes","No","Cancel"}, "No");
+            if (output == JOptionPane.YES_OPTION){
+                try{
+                    databaseConnection.setRootPassword(String.valueOf(passwordField.getPassword()));
+                } catch (SQLException e1){
+                    e1.printStackTrace();
+                    verifyLabel.setText("An Error Occured");
+                }
+                clearFrame();
+                loadLoginScreen();
+            }
+        } else {
+            verifyLabel.setText("Passwords Must Match");
+        }
+    }
     private void saveData(JTextField tagNameTextField, JTextField usernameTextField, JPasswordField password1JPasswordField){
         /**
          * saves password information into database
@@ -748,6 +806,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
         this.add(IntroPanel);
         this.add(passwordJPanel);
         this.add(submitPanel);
+
+        this.setVisible(true);
 
         loginScreen = true;
 
