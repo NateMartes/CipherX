@@ -1,8 +1,6 @@
 package CipherX;
 import java.sql.*;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare.Prepare;
-
 /**
  * SQLConnection
  * 
