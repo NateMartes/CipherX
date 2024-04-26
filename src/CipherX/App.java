@@ -25,6 +25,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     private JLabel strengthLabel;
     private JPanel[] passwordPanels;
     private SQLConnection databaseConnection;
+    private int currentPasswordPanelIndex;
 
     App() {
         /**
@@ -84,20 +85,13 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 if (c.getName() == "submitButton") validateInputOnChangeRootScreen();
                 if (c.getName() == "firstJPasswordField" || c.getName() == "firstPsTextField") getVisibleComponent(textfield2, passwordField2).requestFocus();
             } else if (editScreen){
-                int count = 1;
-                for (JPanel panel : passwordPanels) {
-                    if (panel.getName().equals(c.getParent().getName())) {
-                        break;
-                    }
-                    count ++;
-                }
                 JTextField textfield2 = null;
                 JPasswordField passwordField2 = null;
                 for (Component component : screenComponents){
                     if (component.getName() == "secondTextField") textfield2 = (JTextField) component;
                     if (component.getName() == "secondJPasswordField") passwordField2 = (JPasswordField) component;
                 }
-                if (c.getName() == "submitButton") validateInputOnCreatePassScreen(count);
+                if (c.getName() == "submitButton") validateInputOnCreatePassScreen(currentPasswordPanelIndex);
                 if (c.getName() == "firstJPasswordField" || c.getName() == "firstJPsTextField") getVisibleComponent(textfield2, passwordField2).requestFocus();
             }
             break;
@@ -169,8 +163,9 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     }
                     count ++;
                 }
+                currentPasswordPanelIndex = count;
 
-                loadPassScreen("Edit Password", count);
+                loadPassScreen("Edit Password", currentPasswordPanelIndex);
                 
                 
                 break;
@@ -662,6 +657,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * @return none
          */
         //Get Compoenets
+        
         JTextField tagNameTextField = null;
         JTextField usernameTextField = null;
         JPasswordField password1JPasswordField= null;
@@ -713,7 +709,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         if (editScreen) {
             // remove old password field and replace
             try {
-                String tag = ("'" + databaseConnection.getColumnData("tag_name", 1) + "'");
+                String tag = (databaseConnection.getColumnData("tag_name", edit_field));
                 databaseConnection.dropRow(tag);
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
@@ -1026,9 +1022,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
          * positive integer for replacing a password of that given index
          * @return none
          */
-
-        System.out.println(edit_field);
-        System.out.println(editScreen);
         
         this.setLayout(new GridLayout(0,2,0,0));
 
@@ -1130,15 +1123,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
 
         JTextField firstPsTextField = createTextField("firstPsTextField", 16, 150, 17, 150, 30);
         JTextField secondTextField = createTextField("secondTextField", 16, 150, 17, 150, 30);
-        if (editScreen) {
-            try {
-                firstPsTextField.setText(databaseConnection.getColumnData("password", edit_field));
-                secondTextField.setText(databaseConnection.getColumnData("password", edit_field));
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
 
         JButton viewButton = createButton("viewButton", "View", 16, 305, 13, 80, 35);
 
@@ -1165,6 +1149,17 @@ public class App extends JFrame implements ActionListener, KeyListener{
         secondPasswordLabel.setHorizontalAlignment(JLabel.LEFT);
 
         JPasswordField secondJPasswordField = createJPasswordField("secondJPasswordField", 16, 150, 17, 150, 30);
+
+        if (editScreen) {
+            try {
+                String password = Encryption.getDecryptedPassword(databaseConnection.getColumnData("password", edit_field), databaseConnection.getColumnData("passKey", edit_field));
+                firstJPasswordField.setText(password);
+                secondJPasswordField.setText(password);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
         JButton viewButton1 = createButton("viewButton1", "View", 16, 305, 13, 80, 35);
 
