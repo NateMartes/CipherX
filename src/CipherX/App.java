@@ -266,7 +266,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
-                System.out.println("copyPassButton Recieved");
                 break;
 
             case "copyPassButton":
@@ -287,7 +286,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                     e1.printStackTrace();
                 }
                 
-                System.out.println("copyUsrButton Recieved");
                 break;
 
             case "exportButton":
@@ -327,7 +325,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
             case "removeButton":
                 // drop password
                 String tag_name = c.getParent().getName();
-                System.out.println("'" + tag_name + "'");
                 try {
                     databaseConnection.dropRow(tag_name);
                 }
@@ -341,8 +338,6 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
-                System.out.println("removeButton recieved");
                 break;
 
             default:
