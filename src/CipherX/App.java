@@ -713,14 +713,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
         if (editScreen) {
             // remove old password field and replace
             try {
-                String tag = ("'" + databaseConnection.getColumnData("tag_name", 1) + "'");
+                String tag = (databaseConnection.getColumnData("tag_name", 1));
                 databaseConnection.dropRow(tag);
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else {
-        //Check that dtag_name does not exist in Database
+        //Check that tag_name does not exist in Database
             try {
                 if (databaseConnection.isInDatabase(tagNameTextField.getText())){
                     verifyLabel.setText("Name Already Exists");
