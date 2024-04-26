@@ -716,7 +716,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
                 e.printStackTrace();
             }
         } else {
-        //Check that dtag_name does not exist in Database
+        //Check that tag_name does not exist in Database
             try {
                 if (databaseConnection.isInDatabase(tagNameTextField.getText())){
                     verifyLabel.setText("Name Already Exists");

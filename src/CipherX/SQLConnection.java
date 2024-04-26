@@ -169,6 +169,7 @@ public class SQLConnection {
 
     public boolean dropRow(String tag_name) throws SQLException {
         try {
+            System.out.println(tag_name);
             String query = "USE cipherX";
             stmt.executeUpdate(query);
 
