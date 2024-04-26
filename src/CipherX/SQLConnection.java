@@ -176,7 +176,6 @@ public class SQLConnection {
             query = "SET SQL_SAFE_UPDATES = 0";
             stmt.executeUpdate(query);
 
-
             // delete row
             query = "DELETE FROM passwords WHERE tag_name = ?";
             PreparedStatement stmtPrepared = connection.prepareStatement(query);

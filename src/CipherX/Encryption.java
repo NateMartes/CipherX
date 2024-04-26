@@ -150,7 +150,7 @@ public class Encryption {
          */
         return String.valueOf(decryptPassword(password.toCharArray(), key.toCharArray()));
     }
-    public static boolean checkTextMacthes(JPasswordField a, JPasswordField b){
+    public static boolean checkTextMatches(JPasswordField a, JPasswordField b){
         /**
          * validates that both passwords from JPasswordFields are the same.
          * 
