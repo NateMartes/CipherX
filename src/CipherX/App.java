@@ -325,20 +325,23 @@ public class App extends JFrame implements ActionListener, KeyListener{
             case "removeButton":
                 // drop password
                 String tag_name = c.getParent().getName();
-                try {
-                    databaseConnection.dropRow(tag_name);
+                int output = JOptionPane.showOptionDialog(this,(Object)"This password will be deleted forever and can not be recovered. Delete anyway?","Caution",
+                          JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE, null, new Object[]{"Yes","No"}, "No");
+                if (output == JOptionPane.YES_OPTION){
+                    try {
+                        databaseConnection.dropRow(tag_name);
+                    }
+                    catch (SQLException err) {  
+                        System.err.println(err);
+                    }
+                    clearFrame();
+                    try {
+                        loadMainScreen();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    break;
                 }
-                catch (SQLException err) {  
-                    System.err.println(err);
-                }
-
-                clearFrame();
-                try {
-                    loadMainScreen();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                break;
 
             default:
                 
@@ -983,9 +986,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
             int buttonH = 45;
 
             Image copyImg = ImageIO.read(getClass().getResource("copy.png"));
-            Image viewImg = ImageIO.read(getClass().getResource("view.png"));
+            Image viewImg = ImageIO.read(getClass().getResource("unview.png"));
+            Image unviewImg = ImageIO.read(getClass().getResource("view.png"));
             Image editImg = ImageIO.read(getClass().getResource("edit.png"));
-            Image delImg = ImageIO.read(getClass().getResource("del.gif"));
+            Image delImg = ImageIO.read(getClass().getResource("del.png"));
 
             JButton copyPassButton = createButton("copyPassButton", copyImg, buttonW, buttonH);
             JButton copyUsrButton = createButton("copyUsrButton", copyImg, buttonW, buttonH);
