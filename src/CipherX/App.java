@@ -105,6 +105,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
                         }
                         count ++;
                     }
+
+                    // (check image state) ? change image to view : change image to unview
+
+                    // ((JButton c).getIconImage())
                     
                     for (Component component : c.getParent().getComponents()){
                         if (component.getName() == "passwordTextField") {
@@ -119,6 +123,23 @@ public class App extends JFrame implements ActionListener, KeyListener{
                                 e1.printStackTrace();
                             }
                         }
+                        // Update image icon
+                        // if (component.getName() == "status") {
+                        //     JLabel statusLabel = (JLabel) component;
+                        //     String status = statusLabel.getText();
+                        //     if (status.equals("view")) {
+                        //         statusLabel.setText("unview");
+                        //         ((JButton) c).setIcon(new ImageIcon("view.png"));
+                                
+                        //     }
+                        //     else {
+                        //         statusLabel.setText("view");
+                        //         ((JButton) c).setIcon(new ImageIcon("unview.png"));
+                                
+                        //     }
+                        // }
+                        
+                        
                     }
                 }
                 else {
@@ -517,6 +538,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
             jPasswordField.setVisible(false);
         }
     }
+    
     private JButton createButton(String name, String text, int fontSize, int x, int y, int width, int height){
         /**
          * Creates JButton with all reqiured methods
@@ -991,14 +1013,17 @@ public class App extends JFrame implements ActionListener, KeyListener{
             Image editImg = ImageIO.read(getClass().getResource("edit.png"));
             Image delImg = ImageIO.read(getClass().getResource("del.png"));
 
+            JLabel statusLabel = createLabel("status", "view", 0, 0, 0, 0, 0);
+
             JButton copyPassButton = createButton("copyPassButton", copyImg, buttonW, buttonH);
             JButton copyUsrButton = createButton("copyUsrButton", copyImg, buttonW, buttonH);
-            JButton viewButton = createButton("viewButton", viewImg, buttonW, buttonH);
+            JButton viewButton = createButton("viewButton", unviewImg, buttonW, buttonH);
             JButton editButton = createButton("editButton", editImg, buttonW, buttonH);
             JButton removeButton = createButton("removeButton", delImg, buttonW, buttonH);
 
             passwordPanel.add(Box.createRigidArea(new Dimension(0, 75)));
-
+            
+            passwordPanel.add(statusLabel);
             passwordPanel.add(passwordTagLabel);
             passwordPanel.add(usernameLabel);
             passwordPanel.add(copyUsrButton);
@@ -1310,5 +1335,4 @@ public class App extends JFrame implements ActionListener, KeyListener{
         
         this.setVisible(true);
     }
-
 }
